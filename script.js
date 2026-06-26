@@ -1,456 +1,1004 @@
 // ここにキャンペーンデータを追加します。
-// コピペ用キャンペーン追加テンプレート
-// 次回キャンペーンを追加するときは、この下の { ... } をコピーして campaignData の中に貼り付けます。
-// 貼り付けたら、右側の値だけを書き換えればOKです。
+// β版では、まず手入力でこの campaignData に外食キャンペーンと店舗情報を入れていきます。
+// 新しいデータを追加するときは、下のテンプレートをコピーして campaignData の中に貼り付けます。
 /*
   {
-    id: "sample-campaign-id", // 管理用の名前。英数字とハイフンで、他と重ならない名前にします
-    storeName: "ガスト", // 店舗名
-    genre: "family-restaurant", // 検索用ジャンル。例: lunch, cafe, family-restaurant, sushi, ramen, yakiniku, takeout
-    genreLabel: "ファミレス", // 画面に表示するジャンル名
-    genres: ["ファミレス", "ランチ"], // 検索用ジャンル。選ばれた「何を食べたい？」と比べます
-    campaignTitle: "キッズメニュー注文でドリンクバー割引", // キャンペーン内容
-    recommendedFor: ["kids", "family"], // 誰におすすめか。例: solo, kids, family, friends, couple
-    recommendedForLabel: "子どもと・家族で", // 画面に表示するおすすめ対象
-    companions: ["子どもと", "家族で"], // 検索用の「誰と行く？」。選ばれた条件と比べます
-    reasons: { // 誰と行くかによって表示するおすすめ理由
-      kids: "子ども椅子があり、提供が早いので子ども連れにおすすめです。", // 子どもと行く人向けの理由
-      family: "家族でシェアしやすく、支払い総額を抑えやすいです。", // 家族向けの理由
-    },
-    dealScore: 90, // お得度スコア。数字が大きいほどお得
-    distanceKm: 1.2, // 現在地からの距離。今はデモ用の数字です
-    deadline: "本日21:00終了", // 終了期限として画面に表示する文字
-    urgency: "今日まで", // 今日終了セクションなどで目立たせる短い表示
-    isEndingToday: true, // 今日終了なら true、今日終了でなければ false
-    deadlineMinutes: 21 * 60, // 並び替え用の終了時刻。21:00なら 21 * 60
-    targetStores: "全国の対象店舗", // どの店舗で使えるか
-    targetProducts: "対象キッズメニュー", // 何の商品が対象か
-    paymentMethods: "店舗により異なる", // 使える決済方法
+    id: "sample-campaign-id", // 管理用ID。他のデータと重ならない英数字の名前
+
+    // 店舗情報
+    chainName: "ガスト", // チェーン名
+    storeName: "ガスト 本巣店", // 店舗名。まだ店舗が未定なら「ガスト 対象店舗（デモ）」でもOK
+    storeArea: "岐阜県本巣市", // 地域名
+    address: "岐阜県本巣市〇〇", // 住所。未定なら「確認中」でもOK
+    latitude: null, // 緯度。分からない場合は null
+    longitude: null, // 経度。分からない場合は null
+    mapKeyword: "ガスト 本巣店", // Googleマップ検索で使う言葉
+
+    // キャンペーン情報
+    genre: "family-restaurant", // 内部用ジャンル
+    genreLabel: "ファミレス", // 画面に表示するジャンル
+    campaignTitle: "キッズメニュー注文でドリンクバー割引", // キャンペーン名
+    campaignSummary: "キッズメニュー注文でドリンクバーが割引になります。", // 短い説明
+    discountType: "割引", // 割引 / 還元 / クーポン / 特典
+    dealScore: 90, // お得度スコア。数字が大きいほどおすすめ
+    distanceKm: 1.2, // 現在地からの距離。今はデモ用
+    paymentMethods: "アプリクーポン・各種決済", // 使える決済方法
+    deadline: "本日21:00終了", // 終了日や終了時間
+    urgency: "今日まで", // 今日終了カードで目立たせる短い表示
+    isEndingToday: true, // 今日終了なら true
+    deadlineMinutes: 21 * 60, // 今日終了順で使う終了時刻
+    officialSiteUrl: "https://example.com", // 公式URL
     caution: "一部店舗では対象外の場合があります。", // 注意点
-    officialSiteUrl: "https://example.com", // 公式サイトURL。今はダミーURLでもOK
-    mapKeyword: "ガスト", // Googleマップ検索で使うキーワード
+
+    // 検索用
+    companions: ["子どもと", "家族で"], // 誰と行くか
+    genres: ["ファミレス", "ランチ"], // 食べたいジャンル
+    tags: ["家族向け", "今日終了", "割引"], // 検索やおすすめに使うタグ
+
+    // 表示用
+    recommendedFor: ["kids", "family"], // おすすめ理由を切り替えるための内部用
+    recommendedForLabel: "子どもと・家族で", // 画面に表示するおすすめ対象
+    reasons: {
+      kids: "子ども椅子があり、提供が早いので子ども連れにおすすめです。",
+      family: "家族でシェアしやすく、支払い総額を抑えやすいです。",
+    },
+    targetStores: "全国の対象店舗", // 対象店舗
+    targetProducts: "対象キッズメニュー", // 対象商品
   },
 */
 
 // 新しいお得情報を増やすときは、この campaignData 配列に1件分の情報を追加してください。
 const campaignData = [
+  // β版テストデータ追加欄
+  // 実店舗をテストするときは、この { ... } をコピーして、この下に貼り付けてください。
+  // 住所や緯度経度が未確認の場合は、"要確認" や null のままで大丈夫です。
+  // テスト用データだと分かるように、id や campaignTitle に "test" や "テスト" を入れておくと安心です。
+  /*
+  {
+    id: "test-real-store-001", // 管理用ID。他のデータと重ならない名前にします
+
+    // 店舗情報
+    chainName: "テスト外食チェーン", // チェーン名。例: ガスト、マクドナルド、コメダ珈琲
+    storeName: "テスト外食チェーン 本巣店（テスト）", // 店舗名。実店舗名に書き換えます
+    storeArea: "岐阜県本巣市", // 地域名。例: 岐阜県本巣市
+    address: "要確認", // 住所。未確認なら「要確認」
+    latitude: null, // 緯度。未確認なら null。例: 35.000000
+    longitude: null, // 経度。未確認なら null。例: 136.000000
+    mapKeyword: "テスト外食チェーン 本巣店", // Googleマップ検索用キーワード
+
+    // キャンペーン情報
+    genre: "family-restaurant", // 内部用ジャンル。例: lunch, cafe, family-restaurant, sushi, ramen, yakiniku, takeout
+    genreLabel: "ファミレス", // 画面に表示するジャンル
+    campaignTitle: "【テスト】ドリンクバー割引キャンペーン", // キャンペーン名
+    campaignSummary: "テスト用のお得情報です。実際に使う前に公式情報を確認してください。", // 短い説明
+    discountType: "割引", // 割引 / 還元 / クーポン / 特典
+    dealScore: 80, // お得度スコア。数字が大きいほどおすすめ
+    distanceKm: 1.0, // 緯度経度が未入力のときに使うデモ距離
+    paymentMethods: "要確認", // 使える決済方法。例: PayPay、楽天ペイ、店舗アプリ
+    deadline: "要確認", // 終了日。例: 本日23:59終了、2026年7月31日まで
+    urgency: "要確認", // 今日終了欄で目立たせる短い表示。例: 今日まで
+    isEndingToday: false, // 今日終了なら true、そうでなければ false
+    deadlineMinutes: 24 * 60, // 今日終了順で使う時刻。未定なら仮でOK
+    officialSiteUrl: "https://example.com", // 公式URL。未確認なら仮URL
+    caution: "テストデータです。実際の利用前に公式サイトや店舗で条件を確認してください。", // 注意点
+
+    // 検索用
+    companions: ["ひとり", "家族で"], // 誰と行くか。例: ひとり, 子どもと, 家族で, 友達と, 夫婦で
+    genres: ["ファミレス", "ランチ"], // 食べたいジャンル
+    tags: ["テストデータ", "要確認", "ランチ", "割引"], // 検索やおすすめに使うタグ
+
+    // 表示用
+    recommendedFor: ["solo", "family"], // 内部用。例: solo, kids, family, friends, couple
+    recommendedForLabel: "ひとり・家族で", // 画面に表示するおすすめ対象
+    reasons: {
+      solo: "ひとりでも入りやすいかを確認するためのテスト理由です。",
+      family: "家族で使いやすいかを確認するためのテスト理由です。",
+    },
+    targetStores: "要確認", // 対象店舗。例: 全国の対象店舗、〇〇店のみ
+    targetProducts: "要確認", // 対象商品。例: 対象セット、アプリ注文商品
+  },
+  */
+
   {
     id: "gusto-family-lunch",
-    storeName: "ガスト",
+    chainName: "ガスト",
+    storeName: "ガスト 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "ガスト",
     genre: "family-restaurant",
     genreLabel: "ファミレス",
-    genres: ["ファミレス", "ランチ"],
     campaignTitle: "キッズメニュー注文でドリンクバー割引",
+    campaignSummary: "キッズメニュー注文でドリンクバー割引。条件に合えば会計時にお得になります。",
+    discountType: "割引",
+    dealScore: 86,
+    distanceKm: 0.7,
+    paymentMethods: "アプリクーポン・各種決済",
+    deadline: "本日20:00終了",
+    urgency: "あと3時間",
+    isEndingToday: true,
+    deadlineMinutes: 1200,
+    officialSiteUrl: "https://example.com/gusto",
+    caution: "一部店舗では対象外の場合があります。",
+    companions: ["子どもと", "家族で", "友達と"],
+    genres: ["ファミレス", "ランチ"],
+    tags: ["割引", "ファミレス", "ランチ", "子どもと", "家族で", "友達と", "今日終了", "近い", "子ども連れ", "家族向け"],
     recommendedFor: ["kids", "family", "friends"],
     recommendedForLabel: "子どもと・家族で・友達と",
-    companions: ["子どもと", "家族で", "友達と"],
     reasons: {
       kids: "子ども椅子があり、提供が早いので子ども連れにおすすめです。",
       family: "席が広く、家族でシェアしやすいメニューが多いので支払い総額を抑えやすいです。",
       friends: "長く話しやすく、メニューの価格帯も合わせやすいので友達との食事に向いています。",
     },
-    dealScore: 86,
-    distanceKm: 0.7,
-    deadline: "本日20:00終了",
-    urgency: "あと3時間",
-    isEndingToday: true,
-    deadlineMinutes: 20 * 60,
     targetStores: "全国の対象店舗",
     targetProducts: "キッズメニューと対象セット",
-    paymentMethods: "アプリクーポン・各種決済",
-    caution: "一部店舗では対象外の場合があります。",
-    officialSiteUrl: "https://example.com/gusto",
-    mapKeyword: "ガスト",
   },
   {
     id: "bamiyan-family-dinner",
-    storeName: "バーミヤン",
+    chainName: "バーミヤン",
+    storeName: "バーミヤン 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "バーミヤン",
     genre: "family-restaurant",
     genreLabel: "ファミレス",
-    genres: ["ファミレス", "ランチ"],
     campaignTitle: "セット注文で餃子半額クーポン",
+    campaignSummary: "セット注文で餃子半額クーポン。条件に合えば会計時にお得になります。",
+    discountType: "クーポン",
+    dealScore: 78,
+    distanceKm: 1.4,
+    paymentMethods: "店舗により異なる",
+    deadline: "本日22:00終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 1320,
+    officialSiteUrl: "https://example.com/bamiyan",
+    caution: "クーポン内容は店舗ごとに異なる場合があります。",
+    companions: ["家族で", "友達と"],
+    genres: ["ファミレス", "ランチ"],
+    tags: ["クーポン", "ファミレス", "ランチ", "家族で", "友達と", "今日終了", "家族向け"],
     recommendedFor: ["family", "friends"],
     recommendedForLabel: "家族で・友達と",
-    companions: ["家族で", "友達と"],
     reasons: {
       family: "取り分けしやすい中華メニューが多く、家族でいろいろ頼んでも満足感を出しやすいです。",
       friends: "複数人でシェアしやすく、クーポンの効果を感じやすいので友達との食事に合います。",
     },
-    dealScore: 78,
-    distanceKm: 1.4,
-    deadline: "本日22:00終了",
-    urgency: "今日まで",
-    isEndingToday: true,
-    deadlineMinutes: 22 * 60,
     targetStores: "全国の対象店舗",
     targetProducts: "対象セットと餃子",
-    paymentMethods: "店舗により異なる",
-    caution: "クーポン内容は店舗ごとに異なる場合があります。",
-    officialSiteUrl: "https://example.com/bamiyan",
-    mapKeyword: "バーミヤン",
   },
   {
     id: "kurasushi-kids",
-    storeName: "くら寿司",
+    chainName: "くら寿司",
+    storeName: "くら寿司 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "くら寿司",
     genre: "sushi",
     genreLabel: "回転寿司",
-    genres: ["回転寿司", "ランチ"],
     campaignTitle: "アプリ予約で会計5%オフ",
+    campaignSummary: "アプリ予約で会計5%オフ。条件に合えば会計時にお得になります。",
+    discountType: "割引",
+    dealScore: 82,
+    distanceKm: 2.2,
+    paymentMethods: "アプリ予約・店頭決済",
+    deadline: "本日21:30終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 1290,
+    officialSiteUrl: "https://example.com/kurasushi",
+    caution: "予約条件を満たさない場合は対象外です。",
+    companions: ["子どもと", "家族で", "友達と"],
+    genres: ["回転寿司", "ランチ"],
+    tags: ["割引", "回転寿司", "ランチ", "子どもと", "家族で", "友達と", "今日終了", "子ども連れ", "家族向け"],
     recommendedFor: ["kids", "family", "friends"],
     recommendedForLabel: "子どもと・家族で・友達と",
-    companions: ["子どもと", "家族で", "友達と"],
     reasons: {
       kids: "子どもが選びやすいメニューが多く、待ち時間を減らしやすいので子ども連れに向いています。",
       family: "家族それぞれが好きな皿を選べるので、好みが分かれる日でも使いやすいです。",
       friends: "食べる量を自分で調整できるので、友達同士でも会計感覚を合わせやすいです。",
     },
-    dealScore: 82,
-    distanceKm: 2.2,
-    deadline: "本日21:30終了",
-    urgency: "今日まで",
-    isEndingToday: true,
-    deadlineMinutes: 21 * 60 + 30,
     targetStores: "全国の対象店舗",
     targetProducts: "アプリ予約対象の会計",
-    paymentMethods: "アプリ予約・店頭決済",
-    caution: "予約条件を満たさない場合は対象外です。",
-    officialSiteUrl: "https://example.com/kurasushi",
-    mapKeyword: "くら寿司",
   },
   {
     id: "sushiro-friends",
-    storeName: "スシロー",
+    chainName: "スシロー",
+    storeName: "スシロー 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "スシロー",
     genre: "sushi",
     genreLabel: "回転寿司",
-    genres: ["回転寿司", "ランチ"],
     campaignTitle: "対象皿3皿以上で50円引き",
+    campaignSummary: "対象皿3皿以上で50円引き。条件に合えば会計時にお得になります。",
+    discountType: "割引",
+    dealScore: 74,
+    distanceKm: 1.8,
+    paymentMethods: "店舗により異なる",
+    deadline: "本日23:00終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 1380,
+    officialSiteUrl: "https://example.com/sushiro",
+    caution: "一部商品は割引対象外の場合があります。",
+    companions: ["友達と", "家族で", "夫婦で"],
+    genres: ["回転寿司", "ランチ"],
+    tags: ["割引", "回転寿司", "ランチ", "友達と", "家族で", "夫婦で", "今日終了", "家族向け"],
     recommendedFor: ["friends", "family", "couple"],
     recommendedForLabel: "友達と・家族で・夫婦で",
-    companions: ["友達と", "家族で", "夫婦で"],
     reasons: {
       friends: "好きな皿を少しずつ選べるので、友達と気軽に行きやすい候補です。",
       family: "子どもから大人まで選びやすく、家族全員の好みに合わせやすいです。",
       couple: "短時間でも使いやすく、重すぎない外食にしたい夫婦に向いています。",
     },
-    dealScore: 74,
-    distanceKm: 1.8,
-    deadline: "本日23:00終了",
-    urgency: "今日まで",
-    isEndingToday: true,
-    deadlineMinutes: 23 * 60,
     targetStores: "全国の対象店舗",
     targetProducts: "対象皿",
-    paymentMethods: "店舗により異なる",
-    caution: "一部商品は割引対象外の場合があります。",
-    officialSiteUrl: "https://example.com/sushiro",
-    mapKeyword: "スシロー",
   },
   {
     id: "mcdonald-takeout",
-    storeName: "マクドナルド",
+    chainName: "マクドナルド",
+    storeName: "マクドナルド 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "マクドナルド",
     genre: "takeout",
     genreLabel: "テイクアウト",
-    genres: ["テイクアウト", "ランチ"],
     campaignTitle: "モバイルオーダーでポテトM割引",
+    campaignSummary: "モバイルオーダーでポテトM割引。条件に合えば会計時にお得になります。",
+    discountType: "割引",
+    dealScore: 88,
+    distanceKm: 0.5,
+    paymentMethods: "アプリ注文",
+    deadline: "本日18:00終了",
+    urgency: "あと1時間",
+    isEndingToday: true,
+    deadlineMinutes: 1080,
+    officialSiteUrl: "https://example.com/mcdonald",
+    caution: "クーポン併用不可の場合があります。",
+    companions: ["ひとり", "子どもと", "家族で", "友達と"],
+    genres: ["テイクアウト", "ランチ"],
+    tags: ["割引", "テイクアウト", "ランチ", "ひとり", "子どもと", "家族で", "友達と", "今日終了", "近い", "子ども連れ", "家族向け"],
     recommendedFor: ["solo", "kids", "family", "friends"],
     recommendedForLabel: "ひとり・子どもと・家族で・友達と",
-    companions: ["ひとり", "子どもと", "家族で", "友達と"],
     reasons: {
       solo: "ひとりでも注文しやすく、短時間で食べられるので忙しい時に便利です。",
       kids: "子どもが食べやすいメニューが多く、提供が早いので子ども連れにおすすめです。",
       family: "テイクアウトしやすく、家族分をまとめて買っても使いやすい候補です。",
       friends: "集合前後に立ち寄りやすく、軽く食べたい友達同士に向いています。",
     },
-    dealScore: 88,
-    distanceKm: 0.5,
-    deadline: "本日18:00終了",
-    urgency: "あと1時間",
-    isEndingToday: true,
-    deadlineMinutes: 18 * 60,
     targetStores: "全国の対象店舗",
     targetProducts: "モバイルオーダー対象商品",
-    paymentMethods: "アプリ注文",
-    caution: "クーポン併用不可の場合があります。",
-    officialSiteUrl: "https://example.com/mcdonald",
-    mapKeyword: "マクドナルド",
   },
   {
     id: "komeda-cafe-couple",
-    storeName: "コメダ珈琲",
+    chainName: "コメダ珈琲",
+    storeName: "コメダ珈琲 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "コメダ珈琲",
     genre: "cafe",
     genreLabel: "カフェ",
-    genres: ["カフェ"],
     campaignTitle: "ドリンク注文でミニデザート100円引き",
+    campaignSummary: "ドリンク注文でミニデザート100円引き。条件に合えば会計時にお得になります。",
+    discountType: "割引",
+    dealScore: 72,
+    distanceKm: 0.9,
+    paymentMethods: "店舗により異なる",
+    deadline: "本日19:00終了",
+    urgency: "あと2時間",
+    isEndingToday: true,
+    deadlineMinutes: 1140,
+    officialSiteUrl: "https://example.com/komeda",
+    caution: "店舗ごとに条件が異なる場合があります。",
+    companions: ["ひとり", "夫婦で", "友達と"],
+    genres: ["カフェ"],
+    tags: ["割引", "カフェ", "ひとり", "夫婦で", "友達と", "今日終了", "近い"],
     recommendedFor: ["solo", "couple", "friends"],
     recommendedForLabel: "ひとり・夫婦で・友達と",
-    companions: ["ひとり", "夫婦で", "友達と"],
     reasons: {
       solo: "ひとりでも入りやすく、休憩や作業のついでに使いやすいカフェ候補です。",
       couple: "ゆっくり話しやすく、軽食と甘いものを一緒に楽しみたい夫婦に合います。",
       friends: "カフェ利用しやすく、休憩にも会話にも使いやすい候補です。",
     },
-    dealScore: 72,
-    distanceKm: 0.9,
-    deadline: "本日19:00終了",
-    urgency: "あと2時間",
-    isEndingToday: true,
-    deadlineMinutes: 19 * 60,
     targetStores: "対象店舗のみ",
     targetProducts: "ドリンク注文時のミニデザート",
-    paymentMethods: "店舗により異なる",
-    caution: "店舗ごとに条件が異なる場合があります。",
-    officialSiteUrl: "https://example.com/komeda",
-    mapKeyword: "コメダ珈琲",
   },
   {
     id: "marugame-solo-lunch",
-    storeName: "丸亀製麺",
+    chainName: "丸亀製麺",
+    storeName: "丸亀製麺 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "丸亀製麺",
     genre: "lunch",
     genreLabel: "ランチ",
-    genres: ["ランチ"],
     campaignTitle: "うどん札利用で天ぷら割引",
+    campaignSummary: "うどん札利用で天ぷら割引。条件に合えば会計時にお得になります。",
+    discountType: "割引",
+    dealScore: 80,
+    distanceKm: 1.1,
+    paymentMethods: "店頭決済",
+    deadline: "本日20:30終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 1230,
+    officialSiteUrl: "https://example.com/marugame",
+    caution: "うどん札の利用条件を確認してください。",
+    companions: ["ひとり", "友達と", "家族で"],
+    genres: ["ランチ"],
+    tags: ["割引", "ランチ", "ひとり", "友達と", "家族で", "今日終了", "家族向け"],
     recommendedFor: ["solo", "friends", "family"],
     recommendedForLabel: "ひとり・友達と・家族で",
-    companions: ["ひとり", "友達と", "家族で"],
     reasons: {
       solo: "ひとりでも入りやすく、短時間で食べられるのでランチ候補に向いています。",
       friends: "回転が早く、友達と気軽に食べたい時に使いやすいです。",
       family: "好みに合わせてうどんや天ぷらを選べるので、家族でも使いやすい候補です。",
     },
-    dealScore: 80,
-    distanceKm: 1.1,
-    deadline: "本日20:30終了",
-    urgency: "今日まで",
-    isEndingToday: true,
-    deadlineMinutes: 20 * 60 + 30,
     targetStores: "全国の対象店舗",
     targetProducts: "うどん札対象商品",
-    paymentMethods: "店頭決済",
-    caution: "うどん札の利用条件を確認してください。",
-    officialSiteUrl: "https://example.com/marugame",
-    mapKeyword: "丸亀製麺",
   },
   {
     id: "saizeriya-friends",
-    storeName: "サイゼリヤ",
+    chainName: "サイゼリヤ",
+    storeName: "サイゼリヤ 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "サイゼリヤ",
     genre: "family-restaurant",
     genreLabel: "ファミレス",
-    genres: ["ファミレス", "ランチ"],
     campaignTitle: "対象セットで合計150円お得",
+    campaignSummary: "対象セットで合計150円お得。条件に合えば会計時にお得になります。",
+    discountType: "特典",
+    dealScore: 90,
+    distanceKm: 1.6,
+    paymentMethods: "店舗により異なる",
+    deadline: "本日23:30終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 1410,
+    officialSiteUrl: "https://example.com/saizeriya",
+    caution: "ランチ時間帯など一部条件があります。",
+    companions: ["ひとり", "友達と", "家族で", "夫婦で"],
+    genres: ["ファミレス", "ランチ"],
+    tags: ["特典", "ファミレス", "ランチ", "ひとり", "友達と", "家族で", "夫婦で", "今日終了", "家族向け"],
     recommendedFor: ["solo", "friends", "family", "couple"],
     recommendedForLabel: "ひとり・友達と・家族で・夫婦で",
-    companions: ["ひとり", "友達と", "家族で", "夫婦で"],
     reasons: {
       solo: "ひとりでも価格が読みやすく、軽く済ませたい時に使いやすいです。",
       friends: "長く話しやすく、注文を分けても総額を抑えやすいので友達と行きやすいです。",
       family: "家族でシェアしやすく、支払い総額を抑えやすい外食候補です。",
       couple: "気軽に入れて価格も分かりやすく、夫婦の普段使いに向いています。",
     },
-    dealScore: 90,
-    distanceKm: 1.6,
-    deadline: "本日23:30終了",
-    urgency: "今日まで",
-    isEndingToday: true,
-    deadlineMinutes: 23 * 60 + 30,
     targetStores: "全国の対象店舗",
     targetProducts: "対象セット",
-    paymentMethods: "店舗により異なる",
-    caution: "ランチ時間帯など一部条件があります。",
-    officialSiteUrl: "https://example.com/saizeriya",
-    mapKeyword: "サイゼリヤ",
   },
   {
     id: "sukiya-solo",
-    storeName: "すき家",
+    chainName: "すき家",
+    storeName: "すき家 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "すき家",
     genre: "lunch",
     genreLabel: "ランチ",
-    genres: ["ランチ"],
     campaignTitle: "対象牛丼セットで80円引き",
+    campaignSummary: "対象牛丼セットで80円引き。条件に合えば会計時にお得になります。",
+    discountType: "割引",
+    dealScore: 76,
+    distanceKm: 0.4,
+    paymentMethods: "d払い",
+    deadline: "本日17:00終了",
+    urgency: "まもなく終了",
+    isEndingToday: true,
+    deadlineMinutes: 1020,
+    officialSiteUrl: "https://example.com/sukiya",
+    caution: "一部店舗では対象外の場合があります。",
+    companions: ["ひとり", "友達と"],
+    genres: ["ランチ"],
+    tags: ["割引", "ランチ", "ひとり", "友達と", "今日終了", "近い"],
     recommendedFor: ["solo", "friends"],
     recommendedForLabel: "ひとり・友達と",
-    companions: ["ひとり", "友達と"],
     reasons: {
       solo: "ひとりでも入りやすく、短時間で食べられるので急ぎのランチにおすすめです。",
       friends: "近くでさっと食べられるので、友達と時間をかけずに済ませたい時に向いています。",
     },
-    dealScore: 76,
-    distanceKm: 0.4,
-    deadline: "本日17:00終了",
-    urgency: "まもなく終了",
-    isEndingToday: true,
-    deadlineMinutes: 17 * 60,
     targetStores: "全国の対象店舗",
     targetProducts: "対象牛丼セット",
-    paymentMethods: "d払い",
-    caution: "一部店舗では対象外の場合があります。",
-    officialSiteUrl: "https://example.com/sukiya",
-    mapKeyword: "すき家",
   },
   {
     id: "joyfull-family",
-    storeName: "ジョイフル",
+    chainName: "ジョイフル",
+    storeName: "ジョイフル 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "ジョイフル",
     genre: "family-restaurant",
     genreLabel: "ファミレス",
-    genres: ["ファミレス", "ランチ"],
     campaignTitle: "キッズプレート注文で100円引き",
+    campaignSummary: "キッズプレート注文で100円引き。条件に合えば会計時にお得になります。",
+    discountType: "割引",
+    dealScore: 84,
+    distanceKm: 2.8,
+    paymentMethods: "店舗により異なる",
+    deadline: "本日21:00終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 1260,
+    officialSiteUrl: "https://example.com/joyfull",
+    caution: "対象時間が限られる場合があります。",
+    companions: ["子どもと", "家族で", "友達と"],
+    genres: ["ファミレス", "ランチ"],
+    tags: ["割引", "ファミレス", "ランチ", "子どもと", "家族で", "友達と", "今日終了", "子ども連れ", "家族向け"],
     recommendedFor: ["kids", "family", "friends"],
     recommendedForLabel: "子どもと・家族で・友達と",
-    companions: ["子どもと", "家族で", "友達と"],
     reasons: {
       kids: "子ども向けメニューがあり、席も使いやすいので子ども連れにおすすめです。",
       family: "家族向けメニューが多く、人数が多い時でも選びやすい外食候補です。",
       friends: "価格帯が分かりやすく、友達と気軽に集まりたい時に使いやすいです。",
     },
-    dealScore: 84,
-    distanceKm: 2.8,
-    deadline: "本日21:00終了",
-    urgency: "今日まで",
-    isEndingToday: true,
-    deadlineMinutes: 21 * 60,
     targetStores: "全国の対象店舗",
     targetProducts: "キッズプレート",
-    paymentMethods: "店舗により異なる",
-    caution: "対象時間が限られる場合があります。",
-    officialSiteUrl: "https://example.com/joyfull",
-    mapKeyword: "ジョイフル",
   },
   {
     id: "ramen-solo",
-    storeName: "一風堂",
+    chainName: "一風堂",
+    storeName: "一風堂 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "一風堂",
     genre: "ramen",
     genreLabel: "ラーメン",
-    genres: ["ラーメン", "ランチ"],
     campaignTitle: "替玉1回無料クーポン",
+    campaignSummary: "替玉1回無料クーポン。条件に合えば会計時にお得になります。",
+    discountType: "クーポン",
+    dealScore: 83,
+    distanceKm: 1.3,
+    paymentMethods: "店頭決済",
+    deadline: "本日22:30終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 1350,
+    officialSiteUrl: "https://example.com/ippudo",
+    caution: "他クーポンと併用できない場合があります。",
+    companions: ["ひとり", "友達と"],
+    genres: ["ラーメン", "ランチ"],
+    tags: ["クーポン", "ラーメン", "ランチ", "ひとり", "友達と", "今日終了"],
     recommendedFor: ["solo", "friends"],
     recommendedForLabel: "ひとり・友達と",
-    companions: ["ひとり", "友達と"],
     reasons: {
       solo: "ひとりでも入りやすく、しっかり食べたい時のお得候補です。",
       friends: "短時間で満足感が出やすく、友達とラーメン気分の日に合います。",
     },
-    dealScore: 83,
-    distanceKm: 1.3,
-    deadline: "本日22:30終了",
-    urgency: "今日まで",
-    isEndingToday: true,
-    deadlineMinutes: 22 * 60 + 30,
     targetStores: "対象店舗のみ",
     targetProducts: "替玉",
-    paymentMethods: "店頭決済",
-    caution: "他クーポンと併用できない場合があります。",
-    officialSiteUrl: "https://example.com/ippudo",
-    mapKeyword: "一風堂",
   },
   {
     id: "yakiniku-family",
-    storeName: "牛角",
+    chainName: "牛角",
+    storeName: "牛角 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "牛角",
     genre: "yakiniku",
     genreLabel: "焼肉",
-    genres: ["焼肉"],
     campaignTitle: "食べ放題コース注文で10%オフ",
+    campaignSummary: "食べ放題コース注文で10%オフ。条件に合えば会計時にお得になります。",
+    discountType: "割引",
+    dealScore: 92,
+    distanceKm: 3.1,
+    paymentMethods: "クレジットカード・コード決済",
+    deadline: "本日23:00終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 1380,
+    officialSiteUrl: "https://example.com/gyukaku",
+    caution: "事前予約や人数条件が必要な場合があります。",
+    companions: ["家族で", "友達と", "夫婦で"],
+    genres: ["焼肉"],
+    tags: ["割引", "焼肉", "家族で", "友達と", "夫婦で", "今日終了", "家族向け"],
     recommendedFor: ["family", "friends", "couple"],
     recommendedForLabel: "家族で・友達と・夫婦で",
-    companions: ["家族で", "友達と", "夫婦で"],
     reasons: {
       family: "家族でシェアしやすく、人数が多いほど割引のうれしさが出やすいです。",
       friends: "みんなで食べる楽しさがあり、コース割引でお得感を共有しやすいです。",
       couple: "少し特別感があり、夫婦でしっかり外食したい日に向いています。",
     },
-    dealScore: 92,
-    distanceKm: 3.1,
-    deadline: "本日23:00終了",
-    urgency: "今日まで",
-    isEndingToday: true,
-    deadlineMinutes: 23 * 60,
     targetStores: "全国の対象店舗",
     targetProducts: "食べ放題コース",
-    paymentMethods: "クレジットカード・コード決済",
-    caution: "事前予約や人数条件が必要な場合があります。",
-    officialSiteUrl: "https://example.com/gyukaku",
-    mapKeyword: "牛角",
   },
   {
     id: "gusto-kids-family-v2",
-    storeName: "ガスト",
+    chainName: "ガスト",
+    storeName: "ガスト 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "ガスト",
     genre: "family-restaurant",
     genreLabel: "ファミレス",
-    genres: ["ファミレス", "ランチ"],
     campaignTitle: "キッズプレート注文で家族ドリンクバー割引",
+    campaignSummary: "キッズプレート注文で家族ドリンクバー割引。条件に合えば会計時にお得になります。",
+    discountType: "割引",
+    dealScore: 91,
+    distanceKm: 0.8,
+    paymentMethods: "店舗により異なる",
+    deadline: "本日21:00終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 1260,
+    officialSiteUrl: "https://example.com/gusto-family",
+    caution: "一部店舗では対象外の場合があります。",
+    companions: ["子どもと", "家族で"],
+    genres: ["ファミレス", "ランチ"],
+    tags: ["割引", "ファミレス", "ランチ", "子どもと", "家族で", "今日終了", "近い", "子ども連れ", "家族向け"],
     recommendedFor: ["kids", "family"],
     recommendedForLabel: "子どもと・家族で",
-    companions: ["子どもと", "家族で"],
     reasons: {
       kids: "子ども椅子があり、提供が早いので子ども連れにおすすめです。",
       family: "家族でシェアしやすいメニューが多く、ドリンクバー割引で総額を抑えやすいです。",
     },
-    dealScore: 91,
-    distanceKm: 0.8,
-    deadline: "本日21:00終了",
-    urgency: "今日まで",
-    isEndingToday: true,
-    deadlineMinutes: 21 * 60,
     targetStores: "全国の対象店舗",
     targetProducts: "キッズプレートとドリンクバー",
-    paymentMethods: "店舗により異なる",
-    caution: "一部店舗では対象外の場合があります。",
-    officialSiteUrl: "https://example.com/gusto-family",
-    mapKeyword: "ガスト",
   },
   {
     id: "kurasushi-family-v2",
-    storeName: "くら寿司",
+    chainName: "くら寿司",
+    storeName: "くら寿司 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "くら寿司",
     genre: "sushi",
     genreLabel: "回転寿司",
-    genres: ["回転寿司", "ランチ"],
     campaignTitle: "家族利用でアプリ予約ポイント還元",
+    campaignSummary: "家族利用でアプリ予約ポイント還元。条件に合えば会計時にお得になります。",
+    discountType: "還元",
+    dealScore: 87,
+    distanceKm: 1.7,
+    paymentMethods: "アプリ予約・店頭決済",
+    deadline: "本日22:00終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 1320,
+    officialSiteUrl: "https://example.com/kurasushi-family",
+    caution: "予約条件を満たさない場合は対象外です。",
+    companions: ["子どもと", "家族で", "友達と"],
+    genres: ["回転寿司", "ランチ"],
+    tags: ["還元", "回転寿司", "ランチ", "子どもと", "家族で", "友達と", "今日終了", "子ども連れ", "家族向け"],
     recommendedFor: ["kids", "family", "friends"],
     recommendedForLabel: "子どもと・家族で・友達と",
-    companions: ["子どもと", "家族で", "友達と"],
     reasons: {
       kids: "子どもが選びやすいメニューが多く、家族で待ち時間を減らしやすいです。",
       family: "家族それぞれが好きな皿を選べるので、好みが分かれる日でも使いやすいです。",
       friends: "食べる量を調整しやすく、友達同士でも会計感覚を合わせやすいです。",
     },
-    dealScore: 87,
-    distanceKm: 1.7,
-    deadline: "本日22:00終了",
-    urgency: "今日まで",
-    isEndingToday: true,
-    deadlineMinutes: 22 * 60,
     targetStores: "全国の対象店舗",
     targetProducts: "アプリ予約対象の会計",
-    paymentMethods: "アプリ予約・店頭決済",
-    caution: "予約条件を満たさない場合は対象外です。",
-    officialSiteUrl: "https://example.com/kurasushi-family",
-    mapKeyword: "くら寿司",
   },
   {
     id: "marugame-solo-lunch-v2",
-    storeName: "丸亀製麺",
+    chainName: "丸亀製麺",
+    storeName: "丸亀製麺 本巣店（デモ）",
+    storeArea: "岐阜県本巣市周辺（デモ）",
+    address: "岐阜県本巣市周辺（デモ住所）",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "丸亀製麺",
     genre: "lunch",
     genreLabel: "ランチ",
-    genres: ["ランチ"],
     campaignTitle: "ひとりランチで天ぷら1品割引",
+    campaignSummary: "ひとりランチで天ぷら1品割引。条件に合えば会計時にお得になります。",
+    discountType: "割引",
+    dealScore: 85,
+    distanceKm: 0.9,
+    paymentMethods: "店頭決済",
+    deadline: "本日20:00終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 1200,
+    officialSiteUrl: "https://example.com/marugame-solo",
+    caution: "一部商品は割引対象外の場合があります。",
+    companions: ["ひとり", "友達と"],
+    genres: ["ランチ"],
+    tags: ["割引", "ランチ", "ひとり", "友達と", "今日終了", "近い"],
     recommendedFor: ["solo", "friends"],
     recommendedForLabel: "ひとり・友達と",
-    companions: ["ひとり", "友達と"],
     reasons: {
       solo: "ひとりでも入りやすく、短時間で食べられるので昼休みのランチにおすすめです。",
       friends: "回転が早く、友達と気軽に食べたい時にも使いやすいです。",
     },
-    dealScore: 85,
-    distanceKm: 0.9,
-    deadline: "本日20:00終了",
-    urgency: "今日まで",
-    isEndingToday: true,
-    deadlineMinutes: 20 * 60,
     targetStores: "全国の対象店舗",
     targetProducts: "対象うどんと天ぷら",
-    paymentMethods: "店頭決済",
-    caution: "一部商品は割引対象外の場合があります。",
-    officialSiteUrl: "https://example.com/marugame-solo",
-    mapKeyword: "丸亀製麺",
   },
+
+  // 岐阜市・本巣市・瑞穂市・北方町周辺 β版テスト店舗データ
+  {
+    id: "beta-local-gusto-kitagata",
+    chainName: "ガスト",
+    storeName: "ガスト 岐阜北方店",
+    storeArea: "北方町",
+    address: "岐阜県本巣郡北方町平成8-25",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "ガスト 岐阜北方店",
+    genre: "family-restaurant",
+    genreLabel: "ファミレス",
+    campaignTitle: "β版テスト用サンプルお得情報",
+    campaignSummary: "実際のキャンペーン情報は公式サイトで確認してください。",
+    discountType: "クーポン",
+    dealScore: 82,
+    distanceKm: 1.2,
+    paymentMethods: "要確認",
+    deadline: "本日23:59終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 23 * 60 + 59,
+    officialSiteUrl: "https://example.com",
+    caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    companions: ["子どもと", "家族で", "友達と"],
+    genres: ["ファミレス", "ランチ"],
+    tags: ["β版テスト", "実店舗メモ", "要確認", "北方町", "ファミレス", "クーポン", "ランチ", "子どもと", "家族で", "友達と", "今日終了"],
+    recommendedFor: ["kids", "family", "friends"],
+    recommendedForLabel: "子どもと・家族で・友達と",
+    reasons: {
+      kids: "子ども連れでも使いやすいかを確認するためのβ版テスト候補です。",
+      family: "家族で食事しやすいかを確認するためのβ版テスト候補です。",
+      friends: "友達と入りやすいかを確認するためのβ版テスト候補です。",
+    },
+    targetStores: "ガスト 岐阜北方店（要確認）",
+    targetProducts: "要確認",
+  },
+  {
+    id: "beta-local-mcdonald-motosu-gotanda",
+    chainName: "マクドナルド",
+    storeName: "マクドナルド 本巣五反田店",
+    storeArea: "本巣市",
+    address: "岐阜県本巣市春近134-1",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "マクドナルド 本巣五反田店",
+    genre: "takeout",
+    genreLabel: "テイクアウト",
+    campaignTitle: "β版テスト用サンプルお得情報",
+    campaignSummary: "実際のキャンペーン情報は公式サイトで確認してください。",
+    discountType: "クーポン",
+    dealScore: 85,
+    distanceKm: 2.4,
+    paymentMethods: "要確認",
+    deadline: "要確認",
+    urgency: "要確認",
+    isEndingToday: false,
+    deadlineMinutes: 24 * 60,
+    officialSiteUrl: "https://example.com",
+    caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    companions: ["ひとり", "子どもと", "家族で", "友達と"],
+    genres: ["テイクアウト", "ランチ"],
+    tags: ["β版テスト", "実店舗メモ", "要確認", "本巣市", "テイクアウト", "クーポン", "ランチ", "ひとり", "子どもと", "家族で", "友達と"],
+    recommendedFor: ["solo", "kids", "family", "friends"],
+    recommendedForLabel: "ひとり・子どもと・家族で・友達と",
+    reasons: {
+      solo: "ひとりでも短時間で使いやすく、テイクアウトにも向いています。",
+      kids: "子どもが食べやすいメニューが多く、提供が早いので子ども連れに使いやすいです。",
+      family: "家族分をまとめて買いやすく、移動中の食事にも使いやすいです。",
+      friends: "友達と気軽に立ち寄りやすい候補です。",
+    },
+    targetStores: "マクドナルド 本巣五反田店（要確認）",
+    targetProducts: "要確認",
+  },
+  {
+    id: "beta-local-komeda-gifu-hozumi",
+    chainName: "コメダ珈琲店",
+    storeName: "コメダ珈琲店 岐阜穂積店",
+    storeArea: "瑞穂市",
+    address: "岐阜県瑞穂市馬場春雨町1-22",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "コメダ珈琲店 岐阜穂積店",
+    genre: "cafe",
+    genreLabel: "カフェ",
+    campaignTitle: "β版テスト用サンプルお得情報",
+    campaignSummary: "実際のキャンペーン情報は公式サイトで確認してください。",
+    discountType: "特典",
+    dealScore: 78,
+    distanceKm: 4.8,
+    paymentMethods: "要確認",
+    deadline: "要確認",
+    urgency: "要確認",
+    isEndingToday: false,
+    deadlineMinutes: 24 * 60,
+    officialSiteUrl: "https://example.com",
+    caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    companions: ["ひとり", "友達と", "夫婦で"],
+    genres: ["カフェ"],
+    tags: ["β版テスト", "実店舗メモ", "要確認", "瑞穂市", "カフェ", "特典", "ひとり", "友達と", "夫婦で"],
+    recommendedFor: ["solo", "friends", "couple"],
+    recommendedForLabel: "ひとり・友達と・夫婦で",
+    reasons: {
+      solo: "ひとりでも休憩しやすく、短時間のカフェ利用にも向いています。",
+      friends: "会話しながらゆっくり過ごしやすく、友達との休憩に使いやすい候補です。",
+      couple: "落ち着いて話しやすく、夫婦で軽く外食したい時にも使いやすいです。",
+    },
+    targetStores: "コメダ珈琲店 岐阜穂積店（要確認）",
+    targetProducts: "要確認",
+  },
+  {
+    id: "beta-local-marugame-gifu-kita",
+    chainName: "丸亀製麺",
+    storeName: "丸亀製麺 岐阜北",
+    storeArea: "岐阜市",
+    address: "岐阜県岐阜市則武東3-15-15",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "丸亀製麺 岐阜北",
+    genre: "lunch",
+    genreLabel: "ランチ",
+    campaignTitle: "β版テスト用サンプルお得情報",
+    campaignSummary: "実際のキャンペーン情報は公式サイトで確認してください。",
+    discountType: "特典",
+    dealScore: 80,
+    distanceKm: 5.5,
+    paymentMethods: "要確認",
+    deadline: "本日23:59終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 23 * 60 + 59,
+    officialSiteUrl: "https://example.com",
+    caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    companions: ["ひとり", "家族で", "友達と"],
+    genres: ["ランチ"],
+    tags: ["β版テスト", "実店舗メモ", "要確認", "岐阜市", "ランチ", "特典", "ひとり", "家族で", "友達と", "今日終了"],
+    recommendedFor: ["solo", "family", "friends"],
+    recommendedForLabel: "ひとり・家族で・友達と",
+    reasons: {
+      solo: "ひとりでも入りやすく、短時間で食べられるランチ候補です。",
+      family: "家族で手早く食事を済ませたい時に使いやすいです。",
+      friends: "気軽なランチとして友達とも使いやすい候補です。",
+    },
+    targetStores: "丸亀製麺 岐阜北（要確認）",
+    targetProducts: "要確認",
+  },
+  {
+    id: "beta-local-sukiya-gifu-kitagata",
+    chainName: "すき家",
+    storeName: "すき家 岐阜北方店",
+    storeArea: "北方町",
+    address: "岐阜県本巣郡北方町平成4-3",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "すき家 岐阜北方店",
+    genre: "lunch",
+    genreLabel: "ランチ",
+    campaignTitle: "β版テスト用サンプルお得情報",
+    campaignSummary: "実際のキャンペーン情報は公式サイトで確認してください。",
+    discountType: "特典",
+    dealScore: 83,
+    distanceKm: 1,
+    paymentMethods: "要確認",
+    deadline: "要確認",
+    urgency: "要確認",
+    isEndingToday: false,
+    deadlineMinutes: 24 * 60,
+    officialSiteUrl: "https://example.com",
+    caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    companions: ["ひとり", "友達と"],
+    genres: ["ランチ", "テイクアウト"],
+    tags: ["β版テスト", "実店舗メモ", "要確認", "北方町", "ランチ", "特典", "テイクアウト", "ひとり", "友達と"],
+    recommendedFor: ["solo", "friends"],
+    recommendedForLabel: "ひとり・友達と",
+    reasons: {
+      solo: "ひとりでも入りやすく、短時間で食べられる候補です。",
+      friends: "手軽に食べたい時に友達とも使いやすい候補です。",
+    },
+    targetStores: "すき家 岐阜北方店（要確認）",
+    targetProducts: "要確認",
+  },
+  {
+    id: "beta-local-sushiro-kitagata",
+    chainName: "スシロー",
+    storeName: "スシロー 北方店",
+    storeArea: "北方町",
+    address: "岐阜県本巣郡北方町高屋清流4丁目32番地",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "スシロー 北方店",
+    genre: "sushi",
+    genreLabel: "回転寿司",
+    campaignTitle: "β版テスト用サンプルお得情報",
+    campaignSummary: "実際のキャンペーン情報は公式サイトで確認してください。",
+    discountType: "特典",
+    dealScore: 79,
+    distanceKm: 2.2,
+    paymentMethods: "要確認",
+    deadline: "要確認",
+    urgency: "要確認",
+    isEndingToday: false,
+    deadlineMinutes: 24 * 60,
+    officialSiteUrl: "https://example.com",
+    caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    companions: ["子どもと", "家族で", "友達と"],
+    genres: ["回転寿司", "ランチ"],
+    tags: ["β版テスト", "実店舗メモ", "要確認", "北方町", "回転寿司", "特典", "ランチ", "子どもと", "家族で", "友達と"],
+    recommendedFor: ["kids", "family", "friends"],
+    recommendedForLabel: "子どもと・家族で・友達と",
+    reasons: {
+      kids: "子どもが食べたいものを選びやすく、家族で使いやすい回転寿司候補です。",
+      family: "家族それぞれの好みに合わせやすく、シェアしながら食べやすいです。",
+      friends: "友達と気軽に入りやすく、食べる量を調整しやすい候補です。",
+    },
+    targetStores: "スシロー 北方店（要確認）",
+    targetProducts: "要確認",
+  },
+  {
+    id: "beta-local-kurasushi-gifu-masaki",
+    chainName: "くら寿司",
+    storeName: "くら寿司 岐阜正木店",
+    storeArea: "岐阜市",
+    address: "岐阜県岐阜市正木西町1-20",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "くら寿司 岐阜正木店",
+    genre: "sushi",
+    genreLabel: "回転寿司",
+    campaignTitle: "β版テスト用サンプルお得情報",
+    campaignSummary: "実際のキャンペーン情報は公式サイトで確認してください。",
+    discountType: "特典",
+    dealScore: 81,
+    distanceKm: 6.1,
+    paymentMethods: "要確認",
+    deadline: "本日23:59終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 23 * 60 + 59,
+    officialSiteUrl: "https://example.com",
+    caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    companions: ["子どもと", "家族で", "友達と"],
+    genres: ["回転寿司", "ランチ"],
+    tags: ["β版テスト", "実店舗メモ", "要確認", "岐阜市", "回転寿司", "特典", "ランチ", "子どもと", "家族で", "友達と", "今日終了"],
+    recommendedFor: ["kids", "family", "friends"],
+    recommendedForLabel: "子どもと・家族で・友達と",
+    reasons: {
+      kids: "子どもが食べたいものを選びやすく、家族で使いやすい回転寿司候補です。",
+      family: "家族それぞれの好みに合わせやすく、シェアしながら食べやすいです。",
+      friends: "友達と気軽に入りやすく、食べる量を調整しやすい候補です。",
+    },
+    targetStores: "くら寿司 岐阜正木店（要確認）",
+    targetProducts: "要確認",
+  },
+  {
+    id: "beta-local-saizeriya-malera-gifu",
+    chainName: "サイゼリヤ",
+    storeName: "サイゼリヤ モレラ岐阜店",
+    storeArea: "本巣市",
+    address: "岐阜県本巣市三橋1100 モレラ岐阜1F",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "サイゼリヤ モレラ岐阜店",
+    genre: "family-restaurant",
+    genreLabel: "ファミレス",
+    campaignTitle: "β版テスト用サンプルお得情報",
+    campaignSummary: "実際のキャンペーン情報は公式サイトで確認してください。",
+    discountType: "クーポン",
+    dealScore: 77,
+    distanceKm: 3,
+    paymentMethods: "要確認",
+    deadline: "要確認",
+    urgency: "要確認",
+    isEndingToday: false,
+    deadlineMinutes: 24 * 60,
+    officialSiteUrl: "https://example.com",
+    caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    companions: ["子どもと", "家族で", "友達と"],
+    genres: ["ファミレス", "ランチ"],
+    tags: ["β版テスト", "実店舗メモ", "要確認", "本巣市", "ファミレス", "クーポン", "ランチ", "子どもと", "家族で", "友達と"],
+    recommendedFor: ["kids", "family", "friends"],
+    recommendedForLabel: "子どもと・家族で・友達と",
+    reasons: {
+      kids: "子ども連れでも使いやすいかを確認するためのβ版テスト候補です。",
+      family: "家族で食事しやすいかを確認するためのβ版テスト候補です。",
+      friends: "友達と入りやすいかを確認するためのβ版テスト候補です。",
+    },
+    targetStores: "サイゼリヤ モレラ岐阜店（要確認）",
+    targetProducts: "要確認",
+  },
+  {
+    id: "beta-local-bamiyan-gifu-koenmae",
+    chainName: "バーミヤン",
+    storeName: "バーミヤン 岐阜公園前店",
+    storeArea: "岐阜市",
+    address: "岐阜県岐阜市大宮町1-1",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "バーミヤン 岐阜公園前店",
+    genre: "family-restaurant",
+    genreLabel: "ファミレス",
+    campaignTitle: "β版テスト用サンプルお得情報",
+    campaignSummary: "実際のキャンペーン情報は公式サイトで確認してください。",
+    discountType: "特典",
+    dealScore: 76,
+    distanceKm: 7.2,
+    paymentMethods: "要確認",
+    deadline: "要確認",
+    urgency: "要確認",
+    isEndingToday: false,
+    deadlineMinutes: 24 * 60,
+    officialSiteUrl: "https://example.com",
+    caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    companions: ["子どもと", "家族で", "友達と"],
+    genres: ["ファミレス", "ランチ"],
+    tags: ["β版テスト", "実店舗メモ", "要確認", "岐阜市", "ファミレス", "特典", "ランチ", "子どもと", "家族で", "友達と"],
+    recommendedFor: ["kids", "family", "friends"],
+    recommendedForLabel: "子どもと・家族で・友達と",
+    reasons: {
+      kids: "子ども連れでも使いやすいかを確認するためのβ版テスト候補です。",
+      family: "家族で食事しやすいかを確認するためのβ版テスト候補です。",
+      friends: "友達と入りやすいかを確認するためのβ版テスト候補です。",
+    },
+    targetStores: "バーミヤン 岐阜公園前店（要確認）",
+    targetProducts: "要確認",
+  },
+  {
+    id: "beta-local-joyfull-gifu-kitagata",
+    chainName: "ジョイフル",
+    storeName: "ジョイフル 岐阜北方店",
+    storeArea: "北方町",
+    address: "岐阜県本巣郡北方町栄町1丁目100番",
+    latitude: null,
+    longitude: null,
+    mapKeyword: "ジョイフル 岐阜北方店",
+    genre: "family-restaurant",
+    genreLabel: "ファミレス",
+    campaignTitle: "β版テスト用サンプルお得情報",
+    campaignSummary: "実際のキャンペーン情報は公式サイトで確認してください。",
+    discountType: "特典",
+    dealScore: 80,
+    distanceKm: 1.5,
+    paymentMethods: "要確認",
+    deadline: "本日23:59終了",
+    urgency: "今日まで",
+    isEndingToday: true,
+    deadlineMinutes: 23 * 60 + 59,
+    officialSiteUrl: "https://example.com",
+    caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    companions: ["子どもと", "家族で", "友達と"],
+    genres: ["ファミレス", "ランチ"],
+    tags: ["β版テスト", "実店舗メモ", "要確認", "北方町", "ファミレス", "特典", "ランチ", "子どもと", "家族で", "友達と", "今日終了"],
+    recommendedFor: ["kids", "family", "friends"],
+    recommendedForLabel: "子どもと・家族で・友達と",
+    reasons: {
+      kids: "子ども連れでも使いやすいかを確認するためのβ版テスト候補です。",
+      family: "家族で食事しやすいかを確認するためのβ版テスト候補です。",
+      friends: "友達と入りやすいかを確認するためのβ版テスト候補です。",
+    },
+    targetStores: "ジョイフル 岐阜北方店（要確認）",
+    targetProducts: "要確認",
+  },
+
 ];
 
 const companionLabels = {
@@ -523,6 +1071,10 @@ const savedDealIds = new Set(JSON.parse(localStorage.getItem("savedMealDeals") |
 let currentPosition = null;
 let hasSearched = false;
 
+campaignData.forEach((campaign) => {
+  campaign.demoDistanceKm = campaign.distanceKm;
+});
+
 function saveSavedDeals() {
   localStorage.setItem("savedMealDeals", JSON.stringify([...savedDealIds]));
 }
@@ -560,8 +1112,63 @@ function toggleSaved(campaignId) {
   }
 }
 
+function hasCoordinates(campaign) {
+  return typeof campaign.latitude === "number" && typeof campaign.longitude === "number";
+}
+
+function toRadians(degrees) {
+  return degrees * Math.PI / 180;
+}
+
+function haversineDistanceKm(fromLatitude, fromLongitude, toLatitude, toLongitude) {
+  const earthRadiusKm = 6371;
+  const latitudeDistance = toRadians(toLatitude - fromLatitude);
+  const longitudeDistance = toRadians(toLongitude - fromLongitude);
+  const fromLatitudeRadians = toRadians(fromLatitude);
+  const toLatitudeRadians = toRadians(toLatitude);
+  const a = Math.sin(latitudeDistance / 2) * Math.sin(latitudeDistance / 2)
+    + Math.cos(fromLatitudeRadians) * Math.cos(toLatitudeRadians)
+    * Math.sin(longitudeDistance / 2) * Math.sin(longitudeDistance / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return earthRadiusKm * c;
+}
+
+function updateCampaignDistancesFromPosition(position) {
+  campaignData.forEach((campaign) => {
+    if (hasCoordinates(campaign)) {
+      campaign.distanceKm = Number(haversineDistanceKm(
+        position.latitude,
+        position.longitude,
+        campaign.latitude,
+        campaign.longitude
+      ).toFixed(1));
+      return;
+    }
+
+    campaign.distanceKm = campaign.demoDistanceKm;
+  });
+}
+
+function resetCampaignDistancesToDemo() {
+  campaignData.forEach((campaign) => {
+    campaign.distanceKm = campaign.demoDistanceKm;
+  });
+}
+
+function refreshCampaignViews() {
+  showTopPicks();
+  showSavedCampaigns();
+  showTodayEndingCampaigns();
+  showCampaigns();
+}
+
 function mapsUrl(campaign) {
-  return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(campaign.mapKeyword);
+  if (typeof campaign.latitude === "number" && typeof campaign.longitude === "number") {
+    return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(campaign.latitude + "," + campaign.longitude);
+  }
+
+  return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(campaign.mapKeyword || campaign.storeName || campaign.chainName);
 }
 
 function reasonFor(campaign, companion) {
@@ -684,16 +1291,23 @@ function updateRecommendationTitle() {
 
 function updateSortNote() {
   if (hasSearched) {
-    const extraNote = sortSelect.value === "near" ? "（距離はデモ表示です）" : "";
-    sortNote.textContent = sortLabels[sortSelect.value] + "で表示中" + extraNote + "。";
+    if (sortSelect.value === "near") {
+      sortNote.textContent = currentPosition
+        ? "現在地から近い順で表示中です。"
+        : "近い順はデモ距離で表示しています。現在地を使うと、より正確な距離表示になります。";
+      sortNote.style.display = "block";
+      return;
+    }
+
+    sortNote.textContent = sortLabels[sortSelect.value] + "で表示中。";
     sortNote.style.display = "block";
     return;
   }
 
   if (sortSelect.value === "near") {
     sortNote.textContent = currentPosition
-      ? "現在地から近い順で表示しています（距離はデモ表示です）。"
-      : "ダミー距離を使って近い順で表示しています。";
+      ? "現在地から近い順で表示できます。"
+      : "近い順はデモ距離で表示しています。現在地を使うと、より正確な距離表示になります。";
     sortNote.style.display = "block";
     return;
   }
@@ -801,11 +1415,12 @@ function useCurrentLocation() {
 
   if (!navigator.geolocation) {
     currentPosition = null;
+    resetCampaignDistancesToDemo();
     locationStatus.classList.add("is-error");
     locationStatus.textContent = "現在地：未取得";
     locationDetail.textContent = "位置情報を取得できませんでした。ブラウザの許可設定を確認してください。";
     locationButton.disabled = false;
-    showCampaigns();
+    refreshCampaignViews();
     return;
   }
 
@@ -815,19 +1430,21 @@ function useCurrentLocation() {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
       };
+      updateCampaignDistancesFromPosition(currentPosition);
       locationStatus.classList.add("is-success");
       locationStatus.textContent = "現在地：取得済み";
-      locationDetail.textContent = "現在地を取得しました（確認用：" + currentPosition.latitude.toFixed(4) + ", " + currentPosition.longitude.toFixed(4) + "）";
+      locationDetail.textContent = "現在地から近い順で表示できます（確認用：" + currentPosition.latitude.toFixed(4) + ", " + currentPosition.longitude.toFixed(4) + "）。";
       locationButton.disabled = false;
-      showCampaigns();
+      refreshCampaignViews();
     },
     () => {
       currentPosition = null;
+      resetCampaignDistancesToDemo();
       locationStatus.classList.add("is-error");
       locationStatus.textContent = "現在地：未取得";
       locationDetail.textContent = "位置情報を取得できませんでした。ブラウザの許可設定を確認してください。";
       locationButton.disabled = false;
-      showCampaigns();
+      refreshCampaignViews();
     },
     { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
   );
@@ -840,6 +1457,7 @@ function openDetailModal(campaign) {
     '<div class="modal-summary">',
     '<p class="modal-label">このお得の内容</p>',
     '<p class="modal-campaign">' + campaign.campaignTitle + '</p>',
+    '<p class="modal-summary-text">' + campaign.campaignSummary + '</p>',
     '</div>',
     '<p class="modal-demo-note">※現在はサンプルデータを含むデモ版です。実際に利用する前に公式情報をご確認ください。</p>',
     '<div class="modal-reason"><span>おすすめ理由</span>' + reasonFor(campaign, companion) + '</div>',
@@ -847,6 +1465,9 @@ function openDetailModal(campaign) {
     '<div><dt>対象店舗</dt><dd>' + campaign.targetStores + '</dd></div>',
     '<div><dt>対象商品</dt><dd>' + campaign.targetProducts + '</dd></div>',
     '<div><dt>使える決済方法</dt><dd>' + campaign.paymentMethods + '</dd></div>',
+    '<div><dt>店舗エリア</dt><dd>' + campaign.storeArea + '</dd></div>',
+    '<div><dt>住所</dt><dd>' + campaign.address + '</dd></div>',
+    '<div><dt>お得の種類</dt><dd>' + campaign.discountType + '</dd></div>',
     '<div><dt>終了期限</dt><dd>' + campaign.deadline + '</dd></div>',
     '<div><dt>注意点</dt><dd>' + campaign.caution + '</dd></div>',
     '</dl>',
@@ -919,7 +1540,4 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-showTopPicks();
-showSavedCampaigns();
-showTodayEndingCampaigns();
-showCampaigns();
+refreshCampaignViews();

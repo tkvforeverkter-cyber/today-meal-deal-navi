@@ -1171,3 +1171,12 @@ button:hover {
     min-height: 56px;
   }
 }
+
+
+.modal-summary-text {
+  margin: 0;
+  color: #555b62;
+  font-size: 15px;
+  line-height: 1.7;
+  font-weight: 700;
+}

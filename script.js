@@ -1534,6 +1534,7 @@ const sortLabels = {
 
 const app = document.querySelector(".app");
 const form = document.querySelector("#searchForm");
+const searchSection = document.querySelector(".search-section");
 const locationButton = document.querySelector("#locationButton");
 const locationStatus = document.querySelector("#locationStatus");
 const locationDetail = document.querySelector("#locationDetail");
@@ -1642,11 +1643,17 @@ function resetCampaignDistancesToDemo() {
   });
 }
 
+function updateResultsSectionVisibility() {
+  resultsSection.hidden = !hasSearched;
+  searchSection.hidden = hasSearched;
+}
+
 function refreshCampaignViews() {
   showTopPicks();
   showSavedCampaigns();
   showTodayEndingCampaigns();
   showCampaigns();
+  updateResultsSectionVisibility();
 }
 
 function mapsUrl(campaign) {
@@ -1864,6 +1871,7 @@ function updateResultSummary(resultTotal) {
 function switchToSearchResults() {
   hasSearched = true;
   app.classList.add("is-searched");
+  updateResultsSectionVisibility();
 }
 
 function resetSearchConditions() {
@@ -1873,6 +1881,7 @@ function resetSearchConditions() {
   hasSearched = false;
   app.classList.remove("is-searched");
   showCampaigns();
+  updateResultsSectionVisibility();
   topPicksSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 

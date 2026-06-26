@@ -1317,6 +1317,11 @@ function genreValueFromLabel(label) {
     "ラーメン": "ramen",
     "焼肉": "yakiniku",
     "テイクアウト": "takeout",
+    "ファストフード": "takeout",
+    "うどん": "lunch",
+    "牛丼": "lunch",
+    "子連れ": "family-restaurant",
+    "家族向け": "family-restaurant",
   };
 
   return genreMap[label] || "lunch";
@@ -1435,7 +1440,7 @@ function campaignFromCsvRow(row) {
     recommendedFor: finalRecommendedFor,
     recommendedForLabel: companions.join("・") || "要確認",
     reasons: reasonsFromCsv(row.reasons, finalRecommendedFor),
-    targetStores: row.targetStores || "要確認",
+    targetStores: row.targetStores || (row.storeName ? row.storeName : "全国または近隣の対象店舗。詳細は公式情報をご確認ください。"),
     targetProducts: row.targetProducts || "要確認",
     isVisible: parseVisibility(row.isVisible),
     priority: parsePriority(row.priority),
@@ -1447,7 +1452,7 @@ function campaignsFromCsv(csvText) {
   return csvToObjects(csvText)
     .map(campaignFromCsvRow)
     .filter((campaign) => campaign.isVisible !== false)
-    .filter((campaign) => campaign.id && campaign.storeName && campaign.campaignTitle);
+    .filter((campaign) => campaign.id && campaign.chainName && campaign.campaignTitle);
 }
 
 function setupCampaignRuntimeData() {
@@ -1656,12 +1661,42 @@ function refreshCampaignViews() {
   updateResultsSectionVisibility();
 }
 
+function hasStoreName(campaign) {
+  return Boolean(String(campaign.storeName || "").trim());
+}
+
+function displayStoreName(campaign) {
+  return hasStoreName(campaign) ? campaign.storeName : "近くの対象店舗";
+}
+
+function detailStoreName(campaign) {
+  return hasStoreName(campaign) ? campaign.storeName : "現在地周辺の対象店舗";
+}
+
+function targetStoresText(campaign) {
+  if (hasStoreName(campaign)) {
+    return campaign.targetStores || campaign.storeName;
+  }
+
+  return campaign.targetStores && campaign.targetStores !== "要確認"
+    ? campaign.targetStores
+    : "全国または近隣の対象店舗。詳細は公式情報をご確認ください。";
+}
+
+function routeSearchKeyword(campaign) {
+  if (hasStoreName(campaign)) {
+    return campaign.storeName;
+  }
+
+  return campaign.chainName || campaign.mapKeyword || "外食";
+}
+
 function mapsUrl(campaign) {
   if (typeof campaign.latitude === "number" && typeof campaign.longitude === "number") {
     return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(campaign.latitude + "," + campaign.longitude);
   }
 
-  return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(campaign.mapKeyword || campaign.storeName || campaign.chainName);
+  return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(routeSearchKeyword(campaign));
 }
 
 function isUsingCalculatedDistance(campaign) {
@@ -1713,7 +1748,7 @@ function createCampaignCard(campaign, companion, options = {}) {
   return [
     '<article class="deal-card">',
     '<div class="deal-top">',
-    '<p class="store-name">' + campaign.storeName + '</p>',
+    '<p class="store-name">' + displayStoreName(campaign) + '</p>',
     '<span class="genre">' + campaign.genreLabel + '</span>',
     '</div>',
     '<p class="campaign">' + campaign.campaignTitle + '</p>',
@@ -1752,7 +1787,7 @@ function createTopPickCard(campaign, index) {
   return [
     '<article class="deal-card">',
     '<div class="deal-top"><div><span class="rank-badge">' + (index + 1) + '</span></div><span class="genre">' + campaign.genreLabel + '</span></div>',
-    '<p class="store-name">' + campaign.storeName + '</p>',
+    '<p class="store-name">' + displayStoreName(campaign) + '</p>',
     '<p class="campaign">' + campaign.campaignTitle + '</p>',
     '<p class="pick-note">' + topPickReason(campaign) + '</p>',
     '<div class="reason-box"><p class="reason-label">おすすめ理由</p><p class="reason">' + reasonFor(campaign, campaign.recommendedFor[0]) + '</p></div>',
@@ -2007,7 +2042,7 @@ function useCurrentLocation() {
 function openDetailModal(campaign) {
   const companion = companionSelect.value;
   modalBody.innerHTML = [
-    '<p class="store-name">' + campaign.storeName + '</p>',
+    '<p class="store-name">' + detailStoreName(campaign) + '</p>',
     '<div class="modal-summary">',
     '<p class="modal-label">このお得の内容</p>',
     '<p class="modal-campaign">' + campaign.campaignTitle + '</p>',
@@ -2017,7 +2052,7 @@ function openDetailModal(campaign) {
     '<p class="modal-beta-note">β版情報です。利用前に公式情報をご確認ください。</p>',
     '<div class="modal-reason"><span>おすすめ理由</span>' + reasonFor(campaign, companion) + '</div>',
     '<dl class="detail-grid">',
-    '<div><dt>対象店舗</dt><dd>' + campaign.targetStores + '</dd></div>',
+    '<div><dt>対象店舗</dt><dd>' + targetStoresText(campaign) + '</dd></div>',
     '<div><dt>対象商品</dt><dd>' + campaign.targetProducts + '</dd></div>',
     '<div><dt>使える決済方法</dt><dd>' + paymentMethodsText(campaign) + '</dd></div>',
     '<div><dt>情報元</dt><dd>' + (campaign.sourceType || "要確認") + '</dd></div>',
@@ -2111,7 +2146,9 @@ document.addEventListener("keydown", (event) => {
 const adminDraftForm = document.querySelector("#adminDraftForm");
 const draftOutput = document.querySelector("#draftOutput");
 const copyDraftButton = document.querySelector("#copyDraftButton");
+const sendDraftButton = document.querySelector("#sendDraftButton");
 const draftMessage = document.querySelector("#draftMessage");
+const GAS_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbwqLtKcxI2g6YN0WKNWs_TOgGbfgLW7mEmzSyvJ2UHZkozhDfQYL_GU-_QmBEvpf6u9/exec";
 
 const draftColumnOrder = [
   "id",
@@ -2146,8 +2183,20 @@ const draftColumnOrder = [
   "memo",
 ];
 
+const draftRecommendedKeyMap = {
+  "ひとり": "solo",
+  "子どもと": "kids",
+  "家族で": "family",
+  "友達と": "friends",
+  "夫婦で": "couple",
+};
+
 function draftInputValue(id) {
   return document.querySelector("#" + id)?.value.trim() || "";
+}
+
+function draftSelectedValues(name) {
+  return [...document.querySelectorAll('input[name="' + name + '"]:checked')].map((input) => input.value);
 }
 
 function todayDateText() {
@@ -2158,49 +2207,63 @@ function todayDateText() {
   return year + "-" + month + "-" + day;
 }
 
-function draftIdFromText(chainName, storeName, campaignTitle) {
-  const source = [chainName, storeName, campaignTitle, todayDateText()].filter(Boolean).join("-");
+function draftChainNameValue() {
+  return draftInputValue("draftChainName");
+}
+
+function draftIdFromText(chainName, storeName, campaignTitle, officialUrl) {
+  const source = [chainName, storeName, campaignTitle, officialUrl, todayDateText()].filter(Boolean).join("-");
   const normalized = source
     .toLowerCase()
     .replace(new RegExp("[^a-z0-9ぁ-んァ-ヶ一-龠ー]+", "g"), "-")
-    .replace(new RegExp("^-+|-+$", "g"), "");
+    .replace(new RegExp("^-+|-+$", "g"), "")
+    .slice(0, 80);
 
   return normalized || "draft-" + Date.now();
 }
 
 function buildDraftRow() {
   const officialUrl = draftInputValue("draftOfficialUrl");
-  const chainName = draftInputValue("draftChainName");
+  const chainName = draftChainNameValue();
   const storeName = draftInputValue("draftStoreName");
-  const campaignTitle = draftInputValue("draftCampaignTitle");
+  const selectedGenres = draftSelectedValues("draftGenres");
+  const selectedCompanions = draftSelectedValues("draftCompanions");
+  const genres = selectedGenres.length > 0 ? selectedGenres : ["ランチ"];
+  const companions = selectedCompanions.length > 0 ? selectedCompanions : ["ひとり"];
+  const recommendedFor = companions.map((label) => draftRecommendedKeyMap[label] || label);
+  const campaignTitle = draftInputValue("draftCampaignTitle") || "公式キャンペーン確認用";
+  const campaignSummary = "公式キャンペーンページを確認してから利用してください。";
   const deadline = draftInputValue("draftDeadline") || "要確認";
   const paymentMethods = draftInputValue("draftPaymentMethods") || "要確認";
-  const inputCaution = draftInputValue("draftCaution");
-  const caution = inputCaution || "利用前に公式サイト・公式アプリ・店舗で最新条件を確認してください。";
-  const mapKeyword = storeName || chainName;
+  const discountType = draftInputValue("draftDiscountType") || "要確認";
+  const dealScore = draftInputValue("draftDealScore") || "50";
+  const caution = draftInputValue("draftCaution") || "利用前に公式サイト・公式アプリ・店舗で最新条件を確認してください。";
+  const memo = draftInputValue("draftMemo") || "URLから作成したβ版下書き。公開前に内容確認が必要です。";
+  const targetStores = storeName || "全国または近隣の対象店舗。詳細は公式情報をご確認ください。";
+  const tags = ["公式URL確認", "要確認", "β版下書き", ...genres, ...companions];
 
   return {
-    id: draftIdFromText(chainName, storeName, campaignTitle),
+    id: draftIdFromText(chainName, storeName, campaignTitle, officialUrl),
     chainName,
     storeName,
     storeArea: "要確認",
     address: "要確認",
     latitude: "",
     longitude: "",
-    mapKeyword,
+    mapKeyword: storeName || chainName,
     campaignTitle,
-    campaignSummary: campaignTitle ? campaignTitle + "。利用前に公式情報を確認してください。" : "公式情報を確認してから利用してください。",
-    discountType: "要確認",
-    dealScore: "50",
+    campaignSummary,
+    discountType,
+    dealScore,
     paymentMethods,
     deadline,
     isEndingToday: "FALSE",
-    companions: "ひとり,子どもと,家族で,友達と,夫婦で",
-    genres: "ランチ",
-    tags: "公式URL確認,要確認,β版下書き",
-    recommendedFor: "solo,kids,family,friends,couple",
-    reasons: "公式URLを確認してから使うβ版の下書き候補です。",
-    targetStores: storeName || "要確認",
+    companions: companions.join(","),
+    genres: genres.join(","),
+    tags: tags.join(","),
+    recommendedFor: recommendedFor.join(","),
+    reasons: "公式キャンペーンページを確認してから使うβ版の下書き候補です。",
+    targetStores,
     targetProducts: "要確認",
     officialSiteUrl: officialUrl || "要確認",
     sourceType: "公式URL確認",
@@ -2209,19 +2272,89 @@ function buildDraftRow() {
     caution,
     isVisible: "TRUE",
     priority: "",
-    memo: "管理者用下書き。公式情報を確認してから公開してください。",
+    memo,
   };
 }
 
 function rowToTabSeparatedText(row) {
-  return draftColumnOrder.map((column) => String(row[column] || "").replace(new RegExp("[\\t\\r\\n]+", "g"), " ")).join("	");
+  return draftColumnOrder.map((column) => String(row[column] || "").replace(new RegExp("[\\t\\r\\n]+", "g"), " ")).join("\t");
+}
+
+function buildGasDraftPayload() {
+  const campaignUrlValue = draftInputValue("draftOfficialUrl");
+  const chainNameValue = draftChainNameValue();
+  const selectedGenres = draftSelectedValues("draftGenres");
+  const selectedCompanions = draftSelectedValues("draftCompanions");
+  const memoValue = draftInputValue("draftMemo");
+  const adminPasswordValue = draftInputValue("draftAdminPassword");
+
+  const payload = {
+    campaignUrl: campaignUrlValue,
+    chainName: chainNameValue,
+    genres: selectedGenres,
+    companions: selectedCompanions,
+    memo: memoValue,
+    adminPassword: adminPasswordValue,
+  };
+
+  return payload;
 }
 
 function createDraftData(event) {
   event.preventDefault();
   const row = buildDraftRow();
   draftOutput.value = rowToTabSeparatedText(row);
-  draftMessage.textContent = "スプレッドシートに貼り付ける1行データを作成しました。";
+  draftMessage.textContent = "コピー用の下書きデータを作成しました。スプレッドシートに貼り付けできます。";
+}
+
+function validateGasDraftPayload(payload) {
+  if (!payload.campaignUrl) {
+    return "キャンペーンURLを入力してください";
+  }
+
+  if (!payload.chainName) {
+    return "対象チェーンを選択してください";
+  }
+
+  if (!payload.adminPassword) {
+    return "管理者パスワードを入力してください";
+  }
+
+  return "";
+}
+
+async function sendDraftToSpreadsheet() {
+  const payload = buildGasDraftPayload();
+  const validationMessage = validateGasDraftPayload(payload);
+
+  if (validationMessage) {
+    draftMessage.textContent = validationMessage;
+    return;
+  }
+
+  console.log("GAS_ENDPOINT_URL", GAS_ENDPOINT_URL);
+  console.log("送信payload", payload);
+
+  try {
+    draftMessage.textContent = "送信中です...";
+    sendDraftButton.disabled = true;
+
+    await fetch(GAS_ENDPOINT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    draftMessage.textContent = "送信しました。スプレッドシートの最終行を確認してください。";
+  } catch (error) {
+    console.error("スプレッドシート送信に失敗しました。", error);
+    draftMessage.textContent = "送信に失敗しました。コピー用データを使ってください。";
+  } finally {
+    sendDraftButton.disabled = false;
+  }
 }
 
 async function copyDraftData() {
@@ -2242,6 +2375,10 @@ async function copyDraftData() {
 
 if (adminDraftForm) {
   adminDraftForm.addEventListener("submit", createDraftData);
+}
+
+if (sendDraftButton) {
+  sendDraftButton.addEventListener("click", sendDraftToSpreadsheet);
 }
 
 if (copyDraftButton) {

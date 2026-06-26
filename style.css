@@ -985,7 +985,19 @@ button:hover {
 }
 
 .demo-footer {
+  order: 7;
+}
+
+.admin-draft-section {
   order: 6;
+}
+
+.about-section {
+  order: 8;
+}
+
+.privacy-section {
+  order: 9;
 }
 
 .app.is-searched .results-section {
@@ -1296,13 +1308,14 @@ button:hover {
 .admin-draft {
   border: 1px dashed rgba(32, 33, 36, 0.22);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.58);
 }
 
 .admin-draft summary {
-  min-height: 48px;
-  padding: 14px 16px;
-  color: #4f5660;
+  min-height: 44px;
+  padding: 12px 14px;
+  color: #68717c;
+  font-size: 13px;
   font-weight: 800;
   cursor: pointer;
 }
@@ -1314,7 +1327,7 @@ button:hover {
 .admin-draft-help,
 .admin-draft-message {
   margin: 0 0 12px;
-  color: #5f6368;
+  color: #68717c;
   font-size: 13px;
   line-height: 1.7;
 }
@@ -1379,11 +1392,116 @@ button:hover {
 }
 
 @media (max-width: 640px) {
+  .admin-draft-section {
+    margin-top: 14px;
+  }
+
+  .admin-draft summary {
+    min-height: 42px;
+    padding: 11px 12px;
+    font-size: 12px;
+  }
+
   .admin-draft-grid {
     grid-template-columns: 1fr;
   }
 
   .admin-draft-actions button {
+    width: 100%;
+  }
+}
+
+
+.simple-draft-grid {
+  align-items: start;
+}
+
+.admin-draft-grid select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid rgba(32, 33, 36, 0.18);
+  border-radius: 8px;
+  padding: 0 12px;
+  background: white;
+  color: #202124;
+  font: inherit;
+}
+
+.admin-check-group {
+  margin: 0;
+  border: 1px solid rgba(32, 33, 36, 0.14);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.admin-check-group legend {
+  padding: 0 6px;
+  color: #3c4043;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.admin-check-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-check-list label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid #d8e4f2;
+  border-radius: 999px;
+  background: white;
+  color: #344054;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.admin-check-list input {
+  width: 16px;
+  height: 16px;
+}
+
+.admin-detail-inputs {
+  margin-top: 12px;
+  border-top: 1px solid rgba(32, 33, 36, 0.12);
+  padding-top: 12px;
+}
+
+.admin-detail-inputs summary {
+  width: fit-content;
+  min-height: 38px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #eef1f4;
+  color: #4f5660;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.detail-draft-grid {
+  margin-top: 12px;
+}
+
+@media (max-width: 640px) {
+  .admin-check-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-check-list label {
+    justify-content: flex-start;
+    min-height: 44px;
+    border-radius: 8px;
+  }
+
+  .admin-detail-inputs summary {
     width: 100%;
   }
 }

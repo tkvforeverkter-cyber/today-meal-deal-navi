@@ -491,6 +491,13 @@ const genreSearchLabels = {
   takeout: "テイクアウト",
 };
 
+const sortLabels = {
+  near: "近い順",
+  deal: "お得順",
+  endingToday: "今日終了順",
+};
+
+const app = document.querySelector(".app");
 const form = document.querySelector("#searchForm");
 const locationButton = document.querySelector("#locationButton");
 const locationStatus = document.querySelector("#locationStatus");
@@ -505,11 +512,16 @@ const todayEndingResults = document.querySelector("#todayEndingResults");
 const recommendationTitle = document.querySelector("#recommendationTitle");
 const results = document.querySelector("#results");
 const resultCount = document.querySelector("#resultCount");
+const conditionChips = document.querySelector("#conditionChips");
+const resetButton = document.querySelector("#resetButton");
+const resultsSection = document.querySelector(".results-section");
+const topPicksSection = document.querySelector(".top-picks");
 const sortNote = document.querySelector("#sortNote");
 const detailModal = document.querySelector("#detailModal");
 const modalBody = document.querySelector("#modalBody");
 const savedDealIds = new Set(JSON.parse(localStorage.getItem("savedMealDeals") || "[]"));
 let currentPosition = null;
+let hasSearched = false;
 
 function saveSavedDeals() {
   localStorage.setItem("savedMealDeals", JSON.stringify([...savedDealIds]));
@@ -671,6 +683,13 @@ function updateRecommendationTitle() {
 }
 
 function updateSortNote() {
+  if (hasSearched) {
+    const extraNote = sortSelect.value === "near" ? "（距離はデモ表示です）" : "";
+    sortNote.textContent = sortLabels[sortSelect.value] + "で表示中" + extraNote + "。";
+    sortNote.style.display = "block";
+    return;
+  }
+
   if (sortSelect.value === "near") {
     sortNote.textContent = currentPosition
       ? "現在地から近い順で表示しています（距離はデモ表示です）。"
@@ -680,6 +699,41 @@ function updateSortNote() {
   }
 
   sortNote.style.display = "none";
+}
+
+function updateResultSummary(resultTotal) {
+  resultCount.textContent = hasSearched ? resultTotal + "件見つかりました" : resultTotal + "件";
+  resetButton.hidden = !hasSearched;
+
+  if (!hasSearched) {
+    conditionChips.innerHTML = "";
+    conditionChips.style.display = "none";
+    return;
+  }
+
+  conditionChips.style.display = "flex";
+  conditionChips.innerHTML = [
+    companionSearchLabels[companionSelect.value],
+    genreSearchLabels[foodSelect.value],
+    sortLabels[sortSelect.value],
+  ]
+    .map((label) => '<span>' + label + '</span>')
+    .join("");
+}
+
+function switchToSearchResults() {
+  hasSearched = true;
+  app.classList.add("is-searched");
+}
+
+function resetSearchConditions() {
+  companionSelect.value = "solo";
+  foodSelect.value = "all";
+  sortSelect.value = "near";
+  hasSearched = false;
+  app.classList.remove("is-searched");
+  showCampaigns();
+  topPicksSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function topPickScore(campaign) {
@@ -729,10 +783,10 @@ function showCampaigns() {
 
   updateRecommendationTitle();
   updateSortNote();
-  resultCount.textContent = sortedCampaigns.length + "件";
+  updateResultSummary(sortedCampaigns.length);
 
   if (sortedCampaigns.length === 0) {
-    results.innerHTML = '<p class="empty">この条件に合う外食候補はまだありません。</p>';
+    results.innerHTML = '<p class="empty">条件に合う候補が見つかりませんでした。ジャンルを“なんでも”に変えて試してみてください。</p>';
     return;
   }
 
@@ -783,9 +837,12 @@ function openDetailModal(campaign) {
   const companion = companionSelect.value;
   modalBody.innerHTML = [
     '<p class="store-name">' + campaign.storeName + '</p>',
+    '<div class="modal-summary">',
+    '<p class="modal-label">このお得の内容</p>',
     '<p class="modal-campaign">' + campaign.campaignTitle + '</p>',
-    '<p class="modal-demo-note">※この情報はデモデータです</p>',
-    '<div class="modal-reason">' + reasonFor(campaign, companion) + '</div>',
+    '</div>',
+    '<p class="modal-demo-note">※現在はサンプルデータを含むデモ版です。実際に利用する前に公式情報をご確認ください。</p>',
+    '<div class="modal-reason"><span>おすすめ理由</span>' + reasonFor(campaign, companion) + '</div>',
     '<dl class="detail-grid">',
     '<div><dt>対象店舗</dt><dd>' + campaign.targetStores + '</dd></div>',
     '<div><dt>対象商品</dt><dd>' + campaign.targetProducts + '</dd></div>',
@@ -834,8 +891,12 @@ function handleDetailClick(event) {
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
+  switchToSearchResults();
   showCampaigns();
+  resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
 });
+
+resetButton.addEventListener("click", resetSearchConditions);
 
 locationButton.addEventListener("click", useCurrentLocation);
 topPicksResults.addEventListener("click", handleDetailClick);

@@ -14,13 +14,18 @@
           <div class="demo-label">v0.3 テスト版：現在はサンプルデータで表示しています</div>
           <h1>今日の外食トクナビ</h1>
           <p class="lead">
-            誰と・何を食べたいかを選ぶと、今日使いやすい外食のお得候補を提案するデモアプリです。
+            今日どこで外食するとお得かを、誰と行くか・何を食べたいかに合わせて探せるデモアプリです。
           </p>
-          <p class="test-notice">現在はテスト版です。掲載情報はサンプルを含みます。実際に利用する前に公式サイトや店舗で条件をご確認ください。</p>
+          <ul class="hero-features" aria-label="このアプリでできること">
+            <li>誰と行くかで選べる</li>
+            <li>食べたいジャンルで選べる</li>
+            <li>詳細とルートを確認できる</li>
+          </ul>
+          <p class="test-notice">※現在はサンプルデータを含むデモ版です。実際に利用する前に公式情報をご確認ください。</p>
           <ol class="test-steps" aria-label="使い方3ステップ">
             <li><span>①</span>誰と行くか選ぶ</li>
             <li><span>②</span>食べたいジャンルを選ぶ</li>
-            <li><span>③</span>気になるお店の詳細やルートを見る</li>
+            <li><span>③</span>詳細やルートを見る</li>
           </ol>
         </div>
 
@@ -32,47 +37,58 @@
           </div>
         </div>
 
-        <form class="search-box" id="searchForm">
-          <div class="filters">
-            <div class="field">
-              <label for="companionSelect">誰と行く？</label>
-              <select id="companionSelect" name="companion">
-                <option value="solo">ひとり</option>
-                <option value="kids">子どもと</option>
-                <option value="family">家族で</option>
-                <option value="friends">友達と</option>
-                <option value="couple">夫婦で</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="foodSelect">何を食べたい？</label>
-              <select id="foodSelect" name="food">
-                <option value="all">なんでも</option>
-                <option value="lunch">ランチ</option>
-                <option value="cafe">カフェ</option>
-                <option value="family-restaurant">ファミレス</option>
-                <option value="sushi">回転寿司</option>
-                <option value="ramen">ラーメン</option>
-                <option value="yakiniku">焼肉</option>
-                <option value="takeout">テイクアウト</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="sortSelect">表示順</label>
-              <select id="sortSelect" name="sort">
-                <option value="near">近い順</option>
-                <option value="deal">お得順</option>
-                <option value="endingToday">今日終了順</option>
-              </select>
-            </div>
-          </div>
-
-          <button type="submit">候補を探す</button>
-        </form>
+        
       </section>
 
+      <section class="search-section" aria-label="検索条件">
+        <div class="section-title search-title">
+          <div>
+            <p class="eyebrow">Search</p>
+            <h2>まず条件を選んで探す</h2>
+          </div>
+          <p>検索後は結果を一番上に表示します</p>
+        </div>
+        <form class="search-box" id="searchForm">
+          <p class="search-help">誰と行くか、何を食べたいか、見たい順番を選んでください。</p>
+                  <div class="filters">
+                    <div class="field">
+                      <label for="companionSelect">誰と行く？</label>
+                      <select id="companionSelect" name="companion">
+                        <option value="solo">ひとり</option>
+                        <option value="kids">子どもと</option>
+                        <option value="family">家族で</option>
+                        <option value="friends">友達と</option>
+                        <option value="couple">夫婦で</option>
+                      </select>
+                    </div>
+        
+                    <div class="field">
+                      <label for="foodSelect">何を食べたい？</label>
+                      <select id="foodSelect" name="food">
+                        <option value="all">なんでも</option>
+                        <option value="lunch">ランチ</option>
+                        <option value="cafe">カフェ</option>
+                        <option value="family-restaurant">ファミレス</option>
+                        <option value="sushi">回転寿司</option>
+                        <option value="ramen">ラーメン</option>
+                        <option value="yakiniku">焼肉</option>
+                        <option value="takeout">テイクアウト</option>
+                      </select>
+                    </div>
+        
+                    <div class="field">
+                      <label for="sortSelect">表示順</label>
+                      <select id="sortSelect" name="sort">
+                        <option value="near">近い順</option>
+                        <option value="deal">お得順</option>
+                        <option value="endingToday">今日終了順</option>
+                      </select>
+                    </div>
+                  </div>
+        
+                  <button type="submit">この条件で探す</button>
+                </form>
+      </section>
       <section class="top-picks" aria-label="今日のおすすめ3選">
         <div class="section-title top-picks-title">
           <div>
@@ -85,14 +101,6 @@
         <div class="results top-picks-results" id="topPicksResults"></div>
       </section>
 
-      <section class="saved-section" aria-label="あとで見る">
-        <div class="section-title">
-          <h2>⭐ あとで見る</h2>
-          <p id="savedCount">0件</p>
-        </div>
-        <div class="results saved-results" id="savedResults"></div>
-      </section>
-
       <section class="today-ending" aria-label="今日終了">
         <div class="section-title">
           <h2>🔥 今日終了</h2>
@@ -101,14 +109,29 @@
         <div class="results highlight-results" id="todayEndingResults"></div>
       </section>
 
+
+
+      <section class="saved-section" aria-label="あとで見る">
+        <div class="section-title">
+          <h2>⭐ あとで見る</h2>
+          <p id="savedCount">0件</p>
+        </div>
+        <div class="results saved-results" id="savedResults"></div>
+      </section>
+
+
       <section class="results-section" aria-label="検索結果">
         <div class="section-title result-heading">
           <div>
             <p class="eyebrow">Recommendation</p>
             <h2 id="recommendationTitle">ひとりで行ける外食のお得候補</h2>
           </div>
-          <p id="resultCount">0件</p>
+          <div class="result-tools">
+            <p id="resultCount">0件</p>
+            <button class="reset-button" id="resetButton" type="button" hidden>条件をリセット</button>
+          </div>
         </div>
+        <div class="condition-chips" id="conditionChips" aria-label="選択中の条件"></div>
         <p class="sort-note" id="sortNote">ダミー距離を使って近い順で表示しています。</p>
         <div class="results" id="results"></div>
       </section>

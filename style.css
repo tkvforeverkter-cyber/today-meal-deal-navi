@@ -900,3 +900,274 @@ button:hover {
     min-height: 52px;
   }
 }
+
+
+.app {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero {
+  order: 0;
+}
+
+.top-picks {
+  order: 1;
+}
+
+.today-ending {
+  order: 2;
+}
+
+.saved-section {
+  order: 3;
+}
+
+.search-section {
+  order: 4;
+  padding-top: 20px;
+}
+
+.results-section {
+  order: 5;
+  scroll-margin-top: 18px;
+}
+
+.demo-footer {
+  order: 6;
+}
+
+.app.is-searched .results-section {
+  order: 1;
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid rgba(47, 110, 201, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 40px rgba(32, 33, 36, 0.1);
+}
+
+.app.is-searched .top-picks {
+  order: 2;
+}
+
+.app.is-searched .today-ending {
+  order: 3;
+}
+
+.app.is-searched .saved-section {
+  order: 4;
+}
+
+.app.is-searched .search-section {
+  order: 5;
+}
+
+.app.is-searched .results-section .section-title h2 {
+  font-size: 30px;
+}
+
+.search-title {
+  align-items: end;
+}
+
+.result-tools {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+}
+
+.result-tools p {
+  margin: 0;
+  color: #2f6ec9;
+  font-weight: 900;
+}
+
+.reset-button {
+  width: auto;
+  min-height: 40px;
+  padding: 0 12px;
+  background: #eef1f4;
+  color: #202124;
+  font-size: 13px;
+}
+
+.reset-button:hover {
+  background: #dfe5eb;
+}
+
+.condition-chips {
+  display: none;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -4px 0 14px;
+}
+
+.condition-chips span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: #e9f0fb;
+  color: #24508f;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+@media (max-width: 640px) {
+  .app.is-searched .results-section {
+    padding: 14px;
+  }
+
+  .app.is-searched .results-section .section-title h2 {
+    font-size: 25px;
+  }
+
+  .result-tools {
+    justify-items: stretch;
+  }
+
+  .reset-button {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .condition-chips span {
+    min-height: 32px;
+  }
+}
+
+
+/* v0.3 demo polish: make the first use clear without changing the app's tone. */
+.hero-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 16px 0 0;
+  list-style: none;
+}
+
+.hero-features li {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 11px;
+  border: 1px solid #d8e4f2;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.84);
+  color: #24508f;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.search-section {
+  order: 1;
+  padding-top: 18px;
+}
+
+.top-picks {
+  order: 2;
+}
+
+.today-ending {
+  order: 3;
+}
+
+.saved-section {
+  order: 4;
+}
+
+.results-section {
+  order: 5;
+}
+
+.search-section .section-title {
+  margin-bottom: 12px;
+}
+
+.search-box {
+  border-color: rgba(47, 110, 201, 0.28);
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.search-help {
+  margin: 0 0 14px;
+  color: #555b62;
+  font-size: 14px;
+  line-height: 1.7;
+  font-weight: 700;
+}
+
+.search-box button[type="submit"] {
+  min-height: 54px;
+  font-size: 16px;
+}
+
+.app.is-searched .results-section {
+  order: 1;
+}
+
+.app.is-searched .top-picks {
+  order: 2;
+}
+
+.app.is-searched .today-ending {
+  order: 3;
+}
+
+.app.is-searched .saved-section {
+  order: 4;
+}
+
+.app.is-searched .search-section {
+  order: 5;
+}
+
+.app.is-searched .results-section .section-title {
+  border-bottom-color: rgba(47, 110, 201, 0.3);
+}
+
+.modal-summary {
+  display: grid;
+  gap: 4px;
+}
+
+.modal-label,
+.modal-reason span {
+  display: block;
+  margin: 0 0 6px;
+  color: #2f6ec9;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.modal-summary .modal-campaign {
+  margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .hero-features {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .hero-features li {
+    min-height: 38px;
+    border-radius: 8px;
+  }
+
+  .search-section {
+    padding-top: 14px;
+  }
+
+  .search-title p:last-child {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .search-box button[type="submit"] {
+    min-height: 56px;
+  }
+}

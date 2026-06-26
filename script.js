@@ -28,7 +28,10 @@
     isEndingToday: true, // 今日終了なら true
     deadlineMinutes: 21 * 60, // 今日終了順で使う終了時刻
     officialSiteUrl: "https://example.com", // 公式URL
-    caution: "一部店舗では対象外の場合があります。", // 注意点
+    caution: "一部店舗では対象外の場合があります。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認", // 注意点
 
     // 検索用
     companions: ["子どもと", "家族で"], // 誰と行くか
@@ -47,8 +50,23 @@
   },
 */
 
+// 本物キャンペーン入力テンプレート
+// 公式サイト・アプリ・決済キャンペーンを見て手入力するときは、下の項目をコピーして使います。
+// campaignTitle: "", // キャンペーン名
+// campaignSummary: "", // キャンペーンの短い説明
+// discountType: "", // 割引 / 還元 / クーポン / 特典
+// dealScore: 80, // お得度スコア。数字が大きいほどおすすめ
+// paymentMethods: "", // 使える決済方法
+// deadline: "", // 終了日。例: 2026年7月31日まで
+// isEndingToday: false, // 今日終了なら true
+// officialSiteUrl: "", // 公式サイトやキャンペーン詳細URL
+// sourceType: "公式サイト", // 公式サイト / アプリクーポン / 決済キャンペーン / 手入力 / β版サンプル
+// checkedAt: "2026-06-26", // 情報を確認した日
+// confidence: "要確認", // 高 / 中 / 要確認
+// caution: "", // 注意点。使う前に確認してほしい条件
+
 // 新しいお得情報を増やすときは、この campaignData 配列に1件分の情報を追加してください。
-const campaignData = [
+let campaignData = [
   // β版テストデータ追加欄
   // 実店舗をテストするときは、この { ... } をコピーして、この下に貼り付けてください。
   // 住所や緯度経度が未確認の場合は、"要確認" や null のままで大丈夫です。
@@ -80,7 +98,10 @@ const campaignData = [
     isEndingToday: false, // 今日終了なら true、そうでなければ false
     deadlineMinutes: 24 * 60, // 今日終了順で使う時刻。未定なら仮でOK
     officialSiteUrl: "https://example.com", // 公式URL。未確認なら仮URL
-    caution: "テストデータです。実際の利用前に公式サイトや店舗で条件を確認してください。", // 注意点
+    caution: "テストデータです。実際の利用前に公式サイトや店舗で条件を確認してください。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認", // 注意点
 
     // 検索用
     companions: ["ひとり", "家族で"], // 誰と行くか。例: ひとり, 子どもと, 家族で, 友達と, 夫婦で
@@ -122,6 +143,9 @@ const campaignData = [
     deadlineMinutes: 1200,
     officialSiteUrl: "https://example.com/gusto",
     caution: "一部店舗では対象外の場合があります。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["子どもと", "家族で", "友達と"],
     genres: ["ファミレス", "ランチ"],
     tags: ["割引", "ファミレス", "ランチ", "子どもと", "家族で", "友達と", "今日終了", "近い", "子ども連れ", "家族向け"],
@@ -158,6 +182,9 @@ const campaignData = [
     deadlineMinutes: 1320,
     officialSiteUrl: "https://example.com/bamiyan",
     caution: "クーポン内容は店舗ごとに異なる場合があります。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["家族で", "友達と"],
     genres: ["ファミレス", "ランチ"],
     tags: ["クーポン", "ファミレス", "ランチ", "家族で", "友達と", "今日終了", "家族向け"],
@@ -193,6 +220,9 @@ const campaignData = [
     deadlineMinutes: 1290,
     officialSiteUrl: "https://example.com/kurasushi",
     caution: "予約条件を満たさない場合は対象外です。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["子どもと", "家族で", "友達と"],
     genres: ["回転寿司", "ランチ"],
     tags: ["割引", "回転寿司", "ランチ", "子どもと", "家族で", "友達と", "今日終了", "子ども連れ", "家族向け"],
@@ -229,6 +259,9 @@ const campaignData = [
     deadlineMinutes: 1380,
     officialSiteUrl: "https://example.com/sushiro",
     caution: "一部商品は割引対象外の場合があります。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["友達と", "家族で", "夫婦で"],
     genres: ["回転寿司", "ランチ"],
     tags: ["割引", "回転寿司", "ランチ", "友達と", "家族で", "夫婦で", "今日終了", "家族向け"],
@@ -265,6 +298,9 @@ const campaignData = [
     deadlineMinutes: 1080,
     officialSiteUrl: "https://example.com/mcdonald",
     caution: "クーポン併用不可の場合があります。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["ひとり", "子どもと", "家族で", "友達と"],
     genres: ["テイクアウト", "ランチ"],
     tags: ["割引", "テイクアウト", "ランチ", "ひとり", "子どもと", "家族で", "友達と", "今日終了", "近い", "子ども連れ", "家族向け"],
@@ -302,6 +338,9 @@ const campaignData = [
     deadlineMinutes: 1140,
     officialSiteUrl: "https://example.com/komeda",
     caution: "店舗ごとに条件が異なる場合があります。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["ひとり", "夫婦で", "友達と"],
     genres: ["カフェ"],
     tags: ["割引", "カフェ", "ひとり", "夫婦で", "友達と", "今日終了", "近い"],
@@ -338,6 +377,9 @@ const campaignData = [
     deadlineMinutes: 1230,
     officialSiteUrl: "https://example.com/marugame",
     caution: "うどん札の利用条件を確認してください。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["ひとり", "友達と", "家族で"],
     genres: ["ランチ"],
     tags: ["割引", "ランチ", "ひとり", "友達と", "家族で", "今日終了", "家族向け"],
@@ -374,6 +416,9 @@ const campaignData = [
     deadlineMinutes: 1410,
     officialSiteUrl: "https://example.com/saizeriya",
     caution: "ランチ時間帯など一部条件があります。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["ひとり", "友達と", "家族で", "夫婦で"],
     genres: ["ファミレス", "ランチ"],
     tags: ["特典", "ファミレス", "ランチ", "ひとり", "友達と", "家族で", "夫婦で", "今日終了", "家族向け"],
@@ -411,6 +456,9 @@ const campaignData = [
     deadlineMinutes: 1020,
     officialSiteUrl: "https://example.com/sukiya",
     caution: "一部店舗では対象外の場合があります。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["ひとり", "友達と"],
     genres: ["ランチ"],
     tags: ["割引", "ランチ", "ひとり", "友達と", "今日終了", "近い"],
@@ -446,6 +494,9 @@ const campaignData = [
     deadlineMinutes: 1260,
     officialSiteUrl: "https://example.com/joyfull",
     caution: "対象時間が限られる場合があります。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["子どもと", "家族で", "友達と"],
     genres: ["ファミレス", "ランチ"],
     tags: ["割引", "ファミレス", "ランチ", "子どもと", "家族で", "友達と", "今日終了", "子ども連れ", "家族向け"],
@@ -482,6 +533,9 @@ const campaignData = [
     deadlineMinutes: 1350,
     officialSiteUrl: "https://example.com/ippudo",
     caution: "他クーポンと併用できない場合があります。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["ひとり", "友達と"],
     genres: ["ラーメン", "ランチ"],
     tags: ["クーポン", "ラーメン", "ランチ", "ひとり", "友達と", "今日終了"],
@@ -517,6 +571,9 @@ const campaignData = [
     deadlineMinutes: 1380,
     officialSiteUrl: "https://example.com/gyukaku",
     caution: "事前予約や人数条件が必要な場合があります。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["家族で", "友達と", "夫婦で"],
     genres: ["焼肉"],
     tags: ["割引", "焼肉", "家族で", "友達と", "夫婦で", "今日終了", "家族向け"],
@@ -553,6 +610,9 @@ const campaignData = [
     deadlineMinutes: 1260,
     officialSiteUrl: "https://example.com/gusto-family",
     caution: "一部店舗では対象外の場合があります。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["子どもと", "家族で"],
     genres: ["ファミレス", "ランチ"],
     tags: ["割引", "ファミレス", "ランチ", "子どもと", "家族で", "今日終了", "近い", "子ども連れ", "家族向け"],
@@ -588,6 +648,9 @@ const campaignData = [
     deadlineMinutes: 1320,
     officialSiteUrl: "https://example.com/kurasushi-family",
     caution: "予約条件を満たさない場合は対象外です。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["子どもと", "家族で", "友達と"],
     genres: ["回転寿司", "ランチ"],
     tags: ["還元", "回転寿司", "ランチ", "子どもと", "家族で", "友達と", "今日終了", "子ども連れ", "家族向け"],
@@ -624,6 +687,9 @@ const campaignData = [
     deadlineMinutes: 1200,
     officialSiteUrl: "https://example.com/marugame-solo",
     caution: "一部商品は割引対象外の場合があります。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["ひとり", "友達と"],
     genres: ["ランチ"],
     tags: ["割引", "ランチ", "ひとり", "友達と", "今日終了", "近い"],
@@ -649,21 +715,24 @@ const campaignData = [
     mapKeyword: "ガスト 岐阜北方店",
     genre: "family-restaurant",
     genreLabel: "ファミレス",
-    campaignTitle: "β版テスト用サンプルお得情報",
-    campaignSummary: "実際のキャンペーン情報は公式サイトで確認してください。",
-    discountType: "クーポン",
+    campaignTitle: "すかいらーくアプリクーポン確認用",
+    campaignSummary: "すかいらーくアプリや公式キャンペーンを確認してから利用してください。",
+    discountType: "アプリクーポン",
     dealScore: 82,
     distanceKm: 1.2,
-    paymentMethods: "要確認",
-    deadline: "本日23:59終了",
-    urgency: "今日まで",
-    isEndingToday: true,
-    deadlineMinutes: 23 * 60 + 59,
-    officialSiteUrl: "https://example.com",
-    caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    paymentMethods: "すかいらーくアプリ・店舗で要確認",
+    deadline: "公式アプリ・公式サイトで要確認",
+    urgency: "要確認",
+    isEndingToday: false,
+    deadlineMinutes: 24 * 60,
+    officialSiteUrl: "https://www.skylark.co.jp/gusto/",
+    caution: "β版テスト用データです。実際に利用する前に公式アプリ・公式サイト・店舗で最新条件を確認してください。",
+    sourceType: "公式アプリ・公式サイト確認前提",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["子どもと", "家族で", "友達と"],
     genres: ["ファミレス", "ランチ"],
-    tags: ["β版テスト", "実店舗メモ", "要確認", "北方町", "ファミレス", "クーポン", "ランチ", "子どもと", "家族で", "友達と", "今日終了"],
+    tags: ["β版テスト", "実店舗メモ", "要確認", "北方町", "ファミレス", "クーポン", "ランチ", "子どもと", "家族で", "友達と", "今日終了", "公式アプリ確認前提", "すかいらーくアプリ", "本物寄りβ版"],
     recommendedFor: ["kids", "family", "friends"],
     recommendedForLabel: "子どもと・家族で・友達と",
     reasons: {
@@ -672,7 +741,7 @@ const campaignData = [
       friends: "友達と入りやすいかを確認するためのβ版テスト候補です。",
     },
     targetStores: "ガスト 岐阜北方店（要確認）",
-    targetProducts: "要確認",
+    targetProducts: "すかいらーくアプリや公式キャンペーン上の対象商品を要確認",
   },
   {
     id: "beta-local-mcdonald-motosu-gotanda",
@@ -685,21 +754,24 @@ const campaignData = [
     mapKeyword: "マクドナルド 本巣五反田店",
     genre: "takeout",
     genreLabel: "テイクアウト",
-    campaignTitle: "β版テスト用サンプルお得情報",
-    campaignSummary: "実際のキャンペーン情報は公式サイトで確認してください。",
-    discountType: "クーポン",
+    campaignTitle: "アプリクーポン・モバイルオーダー確認用",
+    campaignSummary: "マクドナルド公式アプリやモバイルオーダーで使えるクーポンを確認してから利用してください。",
+    discountType: "アプリクーポン",
     dealScore: 85,
     distanceKm: 2.4,
-    paymentMethods: "要確認",
-    deadline: "要確認",
+    paymentMethods: "公式アプリ・モバイルオーダー・店舗で要確認",
+    deadline: "公式アプリ・公式サイトで要確認",
     urgency: "要確認",
     isEndingToday: false,
     deadlineMinutes: 24 * 60,
-    officialSiteUrl: "https://example.com",
-    caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    officialSiteUrl: "https://www.mcdonalds.co.jp/",
+    caution: "β版テスト用データです。実際に利用する前に公式アプリ・公式サイト・店舗で最新条件を確認してください。",
+    sourceType: "公式アプリ・公式サイト確認前提",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["ひとり", "子どもと", "家族で", "友達と"],
     genres: ["テイクアウト", "ランチ"],
-    tags: ["β版テスト", "実店舗メモ", "要確認", "本巣市", "テイクアウト", "クーポン", "ランチ", "ひとり", "子どもと", "家族で", "友達と"],
+    tags: ["β版テスト", "実店舗メモ", "要確認", "本巣市", "テイクアウト", "クーポン", "ランチ", "ひとり", "子どもと", "家族で", "友達と", "公式アプリ確認前提", "モバイルオーダー", "本物寄りβ版"],
     recommendedFor: ["solo", "kids", "family", "friends"],
     recommendedForLabel: "ひとり・子どもと・家族で・友達と",
     reasons: {
@@ -709,7 +781,7 @@ const campaignData = [
       friends: "友達と気軽に立ち寄りやすい候補です。",
     },
     targetStores: "マクドナルド 本巣五反田店（要確認）",
-    targetProducts: "要確認",
+    targetProducts: "公式アプリ・モバイルオーダー上の対象商品を要確認",
   },
   {
     id: "beta-local-komeda-gifu-hozumi",
@@ -734,6 +806,9 @@ const campaignData = [
     deadlineMinutes: 24 * 60,
     officialSiteUrl: "https://example.com",
     caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["ひとり", "友達と", "夫婦で"],
     genres: ["カフェ"],
     tags: ["β版テスト", "実店舗メモ", "要確認", "瑞穂市", "カフェ", "特典", "ひとり", "友達と", "夫婦で"],
@@ -758,21 +833,24 @@ const campaignData = [
     mapKeyword: "丸亀製麺 岐阜北",
     genre: "lunch",
     genreLabel: "ランチ",
-    campaignTitle: "β版テスト用サンプルお得情報",
-    campaignSummary: "実際のキャンペーン情報は公式サイトで確認してください。",
-    discountType: "特典",
+    campaignTitle: "丸亀製麺アプリ・キャンペーン確認用",
+    campaignSummary: "丸亀製麺アプリや公式キャンペーン情報を確認してから利用してください。",
+    discountType: "アプリクーポン / キャンペーン",
     dealScore: 80,
     distanceKm: 5.5,
-    paymentMethods: "要確認",
-    deadline: "本日23:59終了",
-    urgency: "今日まで",
-    isEndingToday: true,
-    deadlineMinutes: 23 * 60 + 59,
-    officialSiteUrl: "https://example.com",
-    caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    paymentMethods: "丸亀製麺アプリ・店舗で要確認",
+    deadline: "公式アプリ・公式サイトで要確認",
+    urgency: "要確認",
+    isEndingToday: false,
+    deadlineMinutes: 24 * 60,
+    officialSiteUrl: "https://jp.marugame.com/",
+    caution: "β版テスト用データです。実際に利用する前に公式アプリ・公式サイト・店舗で最新条件を確認してください。",
+    sourceType: "公式アプリ・公式サイト確認前提",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["ひとり", "家族で", "友達と"],
     genres: ["ランチ"],
-    tags: ["β版テスト", "実店舗メモ", "要確認", "岐阜市", "ランチ", "特典", "ひとり", "家族で", "友達と", "今日終了"],
+    tags: ["β版テスト", "実店舗メモ", "要確認", "岐阜市", "ランチ", "特典", "ひとり", "家族で", "友達と", "今日終了", "公式アプリ確認前提", "公式キャンペーン確認前提", "本物寄りβ版"],
     recommendedFor: ["solo", "family", "friends"],
     recommendedForLabel: "ひとり・家族で・友達と",
     reasons: {
@@ -781,7 +859,7 @@ const campaignData = [
       friends: "気軽なランチとして友達とも使いやすい候補です。",
     },
     targetStores: "丸亀製麺 岐阜北（要確認）",
-    targetProducts: "要確認",
+    targetProducts: "丸亀製麺アプリや公式キャンペーン上の対象商品を要確認",
   },
   {
     id: "beta-local-sukiya-gifu-kitagata",
@@ -806,6 +884,9 @@ const campaignData = [
     deadlineMinutes: 24 * 60,
     officialSiteUrl: "https://example.com",
     caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["ひとり", "友達と"],
     genres: ["ランチ", "テイクアウト"],
     tags: ["β版テスト", "実店舗メモ", "要確認", "北方町", "ランチ", "特典", "テイクアウト", "ひとり", "友達と"],
@@ -841,6 +922,9 @@ const campaignData = [
     deadlineMinutes: 24 * 60,
     officialSiteUrl: "https://example.com",
     caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["子どもと", "家族で", "友達と"],
     genres: ["回転寿司", "ランチ"],
     tags: ["β版テスト", "実店舗メモ", "要確認", "北方町", "回転寿司", "特典", "ランチ", "子どもと", "家族で", "友達と"],
@@ -877,6 +961,9 @@ const campaignData = [
     deadlineMinutes: 23 * 60 + 59,
     officialSiteUrl: "https://example.com",
     caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["子どもと", "家族で", "友達と"],
     genres: ["回転寿司", "ランチ"],
     tags: ["β版テスト", "実店舗メモ", "要確認", "岐阜市", "回転寿司", "特典", "ランチ", "子どもと", "家族で", "友達と", "今日終了"],
@@ -913,6 +1000,9 @@ const campaignData = [
     deadlineMinutes: 24 * 60,
     officialSiteUrl: "https://example.com",
     caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["子どもと", "家族で", "友達と"],
     genres: ["ファミレス", "ランチ"],
     tags: ["β版テスト", "実店舗メモ", "要確認", "本巣市", "ファミレス", "クーポン", "ランチ", "子どもと", "家族で", "友達と"],
@@ -949,6 +1039,9 @@ const campaignData = [
     deadlineMinutes: 24 * 60,
     officialSiteUrl: "https://example.com",
     caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["子どもと", "家族で", "友達と"],
     genres: ["ファミレス", "ランチ"],
     tags: ["β版テスト", "実店舗メモ", "要確認", "岐阜市", "ファミレス", "特典", "ランチ", "子どもと", "家族で", "友達と"],
@@ -985,6 +1078,9 @@ const campaignData = [
     deadlineMinutes: 23 * 60 + 59,
     officialSiteUrl: "https://example.com",
     caution: "β版テスト用データです。実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    sourceType: "β版サンプル",
+    checkedAt: "2026-06-26",
+    confidence: "要確認",
     companions: ["子どもと", "家族で", "友達と"],
     genres: ["ファミレス", "ランチ"],
     tags: ["β版テスト", "実店舗メモ", "要確認", "北方町", "ファミレス", "特典", "ランチ", "子どもと", "家族で", "友達と", "今日終了"],
@@ -1000,6 +1096,305 @@ const campaignData = [
   },
 
 ];
+
+// ここにGoogleスプレッドシートCSVのURLを入れます
+// 例: const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/.../export?format=csv&gid=0";
+const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSYLSLEeIfTuIxtr93I5FT_M3V7R-0_YiaXK48GjeGCU79kn-Ju2GhxKtte3hn4_fgBBGwc31IUm-JV/pub?gid=2118753398&single=true&output=csv";
+
+
+function updateDataSourceStatus(sourceLabel) {
+  if (!dataSourceStatus) {
+    return;
+  }
+
+  dataSourceStatus.textContent = "データ取得：" + sourceLabel;
+}
+
+function parseCsvText(csvText) {
+  const rows = [];
+  let row = [];
+  let value = "";
+  let inQuotes = false;
+
+  for (let index = 0; index < csvText.length; index += 1) {
+    const char = csvText[index];
+    const nextChar = csvText[index + 1];
+
+    if (char === '"' && inQuotes && nextChar === '"') {
+      value += '"';
+      index += 1;
+      continue;
+    }
+
+    if (char === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+
+    if (char === "," && !inQuotes) {
+      row.push(value);
+      value = "";
+      continue;
+    }
+
+    if ((char === "\n" || char === "\r") && !inQuotes) {
+      if (char === "\r" && nextChar === "\n") {
+        index += 1;
+      }
+      row.push(value);
+      if (row.some((cell) => cell.trim() !== "")) {
+        rows.push(row);
+      }
+      row = [];
+      value = "";
+      continue;
+    }
+
+    value += char;
+  }
+
+  row.push(value);
+  if (row.some((cell) => cell.trim() !== "")) {
+    rows.push(row);
+  }
+
+  return rows;
+}
+
+function csvToObjects(csvText) {
+  const rows = parseCsvText(csvText);
+
+  if (rows.length < 2) {
+    return [];
+  }
+
+  const headers = rows[0].map((header) => header.trim());
+  return rows.slice(1).map((row) => {
+    return headers.reduce((object, header, index) => {
+      object[header] = (row[index] || "").trim();
+      return object;
+    }, {});
+  });
+}
+
+function splitCsvList(value) {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (!value) {
+    return [];
+  }
+
+  return String(value)
+    .split(/[、,]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function parseNullableNumber(value) {
+  if (value === null || value === undefined || String(value).trim() === "") {
+    return null;
+  }
+
+  const numberValue = Number(value);
+  return Number.isFinite(numberValue) ? numberValue : null;
+}
+
+function parseScore(value) {
+  const numberValue = Number(value);
+  return Number.isFinite(numberValue) ? numberValue : 0;
+}
+
+function parseFlexibleBoolean(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+
+  if (["true", "TRUE", "1", "yes", "y", "はい", "○", "本日", "今日"].map((item) => item.toLowerCase()).includes(normalized)) {
+    return true;
+  }
+
+  if (["false", "FALSE", "0", "no", "n", "いいえ", "×", "なし"].map((item) => item.toLowerCase()).includes(normalized)) {
+    return false;
+  }
+
+  return false;
+}
+
+function genreValueFromLabel(label) {
+  const genreMap = {
+    "ランチ": "lunch",
+    "カフェ": "cafe",
+    "ファミレス": "family-restaurant",
+    "回転寿司": "sushi",
+    "ラーメン": "ramen",
+    "焼肉": "yakiniku",
+    "テイクアウト": "takeout",
+  };
+
+  return genreMap[label] || "lunch";
+}
+
+function recommendedKeyFromLabel(label) {
+  const companionMap = {
+    "ひとり": "solo",
+    "子どもと": "kids",
+    "家族で": "family",
+    "友達と": "friends",
+    "夫婦で": "couple",
+    solo: "solo",
+    kids: "kids",
+    family: "family",
+    friends: "friends",
+    couple: "couple",
+  };
+
+  return companionMap[label] || label;
+}
+
+function reasonsFromCsv(value, recommendedFor) {
+  if (!value) {
+    const defaultReason = "公式情報を確認してから使うβ版のお得候補です。";
+    return recommendedFor.reduce((reasons, key) => {
+      reasons[key] = defaultReason;
+      return reasons;
+    }, {});
+  }
+
+  const text = String(value).trim();
+  const parts = text.split("|").map((item) => item.trim()).filter(Boolean);
+  const reasonObject = {};
+
+  parts.forEach((part) => {
+    const separatorIndex = part.indexOf(":");
+    if (separatorIndex > 0) {
+      const key = recommendedKeyFromLabel(part.slice(0, separatorIndex).trim());
+      reasonObject[key] = part.slice(separatorIndex + 1).trim();
+    }
+  });
+
+  if (Object.keys(reasonObject).length > 0) {
+    return reasonObject;
+  }
+
+  recommendedFor.forEach((key) => {
+    reasonObject[key] = text;
+  });
+
+  return reasonObject;
+}
+
+function deadlineMinutesFromText(deadline) {
+  const match = String(deadline || "").match(/(\d{1,2}):(\d{2})/);
+
+  if (!match) {
+    return 24 * 60;
+  }
+
+  return Number(match[1]) * 60 + Number(match[2]);
+}
+
+function urgencyFromDeadline(deadline, isEndingToday) {
+  if (!isEndingToday) {
+    return "要確認";
+  }
+
+  if (String(deadline || "").includes("本日")) {
+    return deadline;
+  }
+
+  return "今日まで";
+}
+
+function campaignFromCsvRow(row) {
+  const genres = splitCsvList(row.genres);
+  const companions = splitCsvList(row.companions);
+  const tags = splitCsvList(row.tags);
+  const recommendedFor = splitCsvList(row.recommendedFor).map(recommendedKeyFromLabel);
+  const safeRecommendedFor = recommendedFor.length > 0 ? recommendedFor : companions.map(recommendedKeyFromLabel).filter(Boolean);
+  const finalRecommendedFor = safeRecommendedFor.length > 0 ? safeRecommendedFor : ["solo"];
+  const genreLabel = genres[0] || "ランチ";
+  const isEndingToday = parseFlexibleBoolean(row.isEndingToday);
+
+  return {
+    id: row.id,
+    chainName: row.chainName,
+    storeName: row.storeName,
+    storeArea: row.storeArea,
+    address: row.address || "要確認",
+    latitude: parseNullableNumber(row.latitude),
+    longitude: parseNullableNumber(row.longitude),
+    mapKeyword: row.mapKeyword || row.storeName || row.chainName,
+    genre: genreValueFromLabel(genreLabel),
+    genreLabel,
+    campaignTitle: row.campaignTitle || "キャンペーン確認用",
+    campaignSummary: row.campaignSummary || "公式情報を確認してから利用してください。",
+    discountType: row.discountType || "要確認",
+    dealScore: parseScore(row.dealScore),
+    distanceKm: 9.9,
+    paymentMethods: splitCsvList(row.paymentMethods).length > 0 ? splitCsvList(row.paymentMethods) : ["要確認"],
+    deadline: row.deadline || "要確認",
+    urgency: urgencyFromDeadline(row.deadline, isEndingToday),
+    isEndingToday,
+    deadlineMinutes: deadlineMinutesFromText(row.deadline),
+    officialSiteUrl: row.officialSiteUrl || "要確認",
+    caution: row.caution || "実際に利用する前に公式サイトや店舗で条件を確認してください。",
+    sourceType: row.sourceType || "手入力",
+    checkedAt: row.checkedAt || "要確認",
+    confidence: row.confidence || "要確認",
+    companions,
+    genres,
+    tags,
+    recommendedFor: finalRecommendedFor,
+    recommendedForLabel: companions.join("・") || "要確認",
+    reasons: reasonsFromCsv(row.reasons, finalRecommendedFor),
+    targetStores: row.targetStores || "要確認",
+    targetProducts: row.targetProducts || "要確認",
+  };
+}
+
+function campaignsFromCsv(csvText) {
+  return csvToObjects(csvText)
+    .map(campaignFromCsvRow)
+    .filter((campaign) => campaign.id && campaign.storeName && campaign.campaignTitle);
+}
+
+function setupCampaignRuntimeData() {
+  campaignData.forEach((campaign) => {
+    campaign.demoDistanceKm = campaign.distanceKm;
+  });
+}
+
+async function loadCampaignsFromCsv() {
+  if (!GOOGLE_SHEET_CSV_URL) {
+    setupCampaignRuntimeData();
+    updateDataSourceStatus("内蔵デモデータ");
+    return;
+  }
+
+  try {
+    const response = await fetch(GOOGLE_SHEET_CSV_URL);
+
+    if (!response.ok) {
+      throw new Error("CSVを読み込めませんでした");
+    }
+
+    const csvText = await response.text();
+    const csvCampaigns = campaignsFromCsv(csvText);
+
+    if (csvCampaigns.length === 0) {
+      throw new Error("CSVに有効なデータがありませんでした");
+    }
+
+    campaignData = csvCampaigns;
+    setupCampaignRuntimeData();
+    updateDataSourceStatus("スプレッドシート");
+  } catch (error) {
+    console.warn("CSV読み込みに失敗したため、script.js内のcampaignDataを使います。", error);
+    setupCampaignRuntimeData();
+    updateDataSourceStatus("内蔵デモデータ");
+  }
+}
+
 
 const companionLabels = {
   solo: "ひとりで行きやすい",
@@ -1050,6 +1445,7 @@ const form = document.querySelector("#searchForm");
 const locationButton = document.querySelector("#locationButton");
 const locationStatus = document.querySelector("#locationStatus");
 const locationDetail = document.querySelector("#locationDetail");
+const dataSourceStatus = document.querySelector("#dataSourceStatus");
 const companionSelect = document.querySelector("#companionSelect");
 const foodSelect = document.querySelector("#foodSelect");
 const sortSelect = document.querySelector("#sortSelect");
@@ -1071,9 +1467,7 @@ const savedDealIds = new Set(JSON.parse(localStorage.getItem("savedMealDeals") |
 let currentPosition = null;
 let hasSearched = false;
 
-campaignData.forEach((campaign) => {
-  campaign.demoDistanceKm = campaign.distanceKm;
-});
+// CSVを使う場合も、手入力データを使う場合も、読み込み後に demoDistanceKm を準備します。
 
 function saveSavedDeals() {
   localStorage.setItem("savedMealDeals", JSON.stringify([...savedDealIds]));
@@ -1187,6 +1581,30 @@ function distanceSourceText(campaign) {
     : "距離はデモ表示です";
 }
 
+function sourceMetaText(campaign) {
+  return "情報元：" + (campaign.sourceType || "要確認")
+    + " / 確認日：" + (campaign.checkedAt || "要確認")
+    + " / 信頼度：" + (campaign.confidence || "要確認");
+}
+
+function sourceNoticeText(campaign) {
+  if (campaign.confidence === "要確認") {
+    return "公式情報をご確認ください";
+  }
+
+  return "利用前に条件をご確認ください";
+}
+
+function paymentMethodsText(campaign) {
+  return Array.isArray(campaign.paymentMethods)
+    ? campaign.paymentMethods.join("、")
+    : campaign.paymentMethods;
+}
+
+function sourceBadgeText(campaign) {
+  return campaign.sourceType === "β版サンプル" ? "β版サンプル" : campaign.sourceType;
+}
+
 function reasonFor(campaign, companion) {
   return campaign.reasons[companion] || campaign.reasons[campaign.recommendedFor[0]];
 }
@@ -1210,7 +1628,7 @@ function createCampaignCard(campaign, companion, options = {}) {
     '<div class="score-item"><span class="score-label">終了</span><span class="score-value">' + campaign.deadline.replace("本日", "") + '</span></div>',
     '</div>',
     '<div class="deadline-badge"><span>' + (isHighlight ? campaign.urgency : campaign.deadline) + '</span><span>今日終了</span></div>',
-    '<p class="demo-note">※この情報はデモデータです</p>',
+    '<div class="source-note"><span class="source-badge">' + sourceBadgeText(campaign) + '</span><span>' + sourceMetaText(campaign) + '</span><span>' + sourceNoticeText(campaign) + '</span></div>',
     '<dl class="meta-list"><div><dt>誰におすすめか</dt><dd>' + campaign.recommendedForLabel + '</dd></div></dl>',
     '<div class="card-actions three-actions">',
     '<button class="detail-button" type="button" data-detail-id="' + campaign.id + '">詳細を見る</button>',
@@ -1245,7 +1663,7 @@ function createTopPickCard(campaign, index) {
     '<div class="score-item"><span class="score-label">終了</span><span class="score-value">' + campaign.deadline.replace("本日", "") + '</span></div>',
     '</div>',
     '<div class="deadline-badge"><span>' + campaign.urgency + '</span><span>今日終了</span></div>',
-    '<p class="demo-note">※この情報はデモデータです</p>',
+    '<div class="source-note"><span class="source-badge">' + sourceBadgeText(campaign) + '</span><span>' + sourceMetaText(campaign) + '</span><span>' + sourceNoticeText(campaign) + '</span></div>',
     '<div class="card-actions three-actions">',
     '<button class="detail-button" type="button" data-detail-id="' + campaign.id + '">詳細を見る</button>',
     '<a class="route-link" href="' + mapsUrl(campaign) + '" target="_blank" rel="noreferrer">ルートを見る</a>',
@@ -1475,12 +1893,15 @@ function openDetailModal(campaign) {
     '<p class="modal-campaign">' + campaign.campaignTitle + '</p>',
     '<p class="modal-summary-text">' + campaign.campaignSummary + '</p>',
     '</div>',
-    '<p class="modal-demo-note">※現在はサンプルデータを含むデモ版です。実際に利用する前に公式情報をご確認ください。</p>',
+    '<div class="source-note modal-source-note"><span class="source-badge">' + sourceBadgeText(campaign) + '</span><span>' + sourceMetaText(campaign) + '</span><span>' + sourceNoticeText(campaign) + '</span></div>',
     '<div class="modal-reason"><span>おすすめ理由</span>' + reasonFor(campaign, companion) + '</div>',
     '<dl class="detail-grid">',
     '<div><dt>対象店舗</dt><dd>' + campaign.targetStores + '</dd></div>',
     '<div><dt>対象商品</dt><dd>' + campaign.targetProducts + '</dd></div>',
-    '<div><dt>使える決済方法</dt><dd>' + campaign.paymentMethods + '</dd></div>',
+    '<div><dt>使える決済方法</dt><dd>' + paymentMethodsText(campaign) + '</dd></div>',
+    '<div><dt>情報元</dt><dd>' + (campaign.sourceType || "要確認") + '</dd></div>',
+    '<div><dt>確認日</dt><dd>' + (campaign.checkedAt || "要確認") + '</dd></div>',
+    '<div><dt>信頼度</dt><dd>' + (campaign.confidence || "要確認") + '</dd></div>',
     '<div><dt>店舗エリア</dt><dd>' + campaign.storeArea + '</dd></div>',
     '<div><dt>住所</dt><dd>' + campaign.address + '</dd></div>',
     '<div><dt>距離</dt><dd>' + distanceValueText(campaign) + '<br><span class="distance-source">' + distanceSourceText(campaign) + '</span></dd></div>',
@@ -1557,4 +1978,4 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-refreshCampaignViews();
+loadCampaignsFromCsv().then(refreshCampaignViews);

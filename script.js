@@ -2014,6 +2014,7 @@ function openDetailModal(campaign) {
     '<p class="modal-summary-text">' + campaign.campaignSummary + '</p>',
     '</div>',
     '<div class="source-note modal-source-note"><span class="source-badge">' + sourceBadgeText(campaign) + '</span><span>' + sourceMetaText(campaign) + '</span><span>' + sourceNoticeText(campaign) + '</span></div>',
+    '<p class="modal-beta-note">β版情報です。利用前に公式情報をご確認ください。</p>',
     '<div class="modal-reason"><span>おすすめ理由</span>' + reasonFor(campaign, companion) + '</div>',
     '<dl class="detail-grid">',
     '<div><dt>対象店舗</dt><dd>' + campaign.targetStores + '</dd></div>',
@@ -2077,6 +2078,14 @@ form.addEventListener("submit", (event) => {
 
 resetButton.addEventListener("click", resetSearchConditions);
 
+function handleFilterChange() {
+  refreshCampaignViews();
+}
+
+companionSelect.addEventListener("change", handleFilterChange);
+foodSelect.addEventListener("change", handleFilterChange);
+sortSelect.addEventListener("change", handleFilterChange);
+
 locationButton.addEventListener("click", useCurrentLocation);
 topPicksResults.addEventListener("click", handleDetailClick);
 topPicksResults.addEventListener("click", handleSaveClick);
@@ -2097,5 +2106,146 @@ document.addEventListener("keydown", (event) => {
     closeDetailModal();
   }
 });
+
+
+const adminDraftForm = document.querySelector("#adminDraftForm");
+const draftOutput = document.querySelector("#draftOutput");
+const copyDraftButton = document.querySelector("#copyDraftButton");
+const draftMessage = document.querySelector("#draftMessage");
+
+const draftColumnOrder = [
+  "id",
+  "chainName",
+  "storeName",
+  "storeArea",
+  "address",
+  "latitude",
+  "longitude",
+  "mapKeyword",
+  "campaignTitle",
+  "campaignSummary",
+  "discountType",
+  "dealScore",
+  "paymentMethods",
+  "deadline",
+  "isEndingToday",
+  "companions",
+  "genres",
+  "tags",
+  "recommendedFor",
+  "reasons",
+  "targetStores",
+  "targetProducts",
+  "officialSiteUrl",
+  "sourceType",
+  "checkedAt",
+  "confidence",
+  "caution",
+  "isVisible",
+  "priority",
+  "memo",
+];
+
+function draftInputValue(id) {
+  return document.querySelector("#" + id)?.value.trim() || "";
+}
+
+function todayDateText() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return year + "-" + month + "-" + day;
+}
+
+function draftIdFromText(chainName, storeName, campaignTitle) {
+  const source = [chainName, storeName, campaignTitle, todayDateText()].filter(Boolean).join("-");
+  const normalized = source
+    .toLowerCase()
+    .replace(new RegExp("[^a-z0-9ぁ-んァ-ヶ一-龠ー]+", "g"), "-")
+    .replace(new RegExp("^-+|-+$", "g"), "");
+
+  return normalized || "draft-" + Date.now();
+}
+
+function buildDraftRow() {
+  const officialUrl = draftInputValue("draftOfficialUrl");
+  const chainName = draftInputValue("draftChainName");
+  const storeName = draftInputValue("draftStoreName");
+  const campaignTitle = draftInputValue("draftCampaignTitle");
+  const deadline = draftInputValue("draftDeadline") || "要確認";
+  const paymentMethods = draftInputValue("draftPaymentMethods") || "要確認";
+  const inputCaution = draftInputValue("draftCaution");
+  const caution = inputCaution || "利用前に公式サイト・公式アプリ・店舗で最新条件を確認してください。";
+  const mapKeyword = storeName || chainName;
+
+  return {
+    id: draftIdFromText(chainName, storeName, campaignTitle),
+    chainName,
+    storeName,
+    storeArea: "要確認",
+    address: "要確認",
+    latitude: "",
+    longitude: "",
+    mapKeyword,
+    campaignTitle,
+    campaignSummary: campaignTitle ? campaignTitle + "。利用前に公式情報を確認してください。" : "公式情報を確認してから利用してください。",
+    discountType: "要確認",
+    dealScore: "50",
+    paymentMethods,
+    deadline,
+    isEndingToday: "FALSE",
+    companions: "ひとり,子どもと,家族で,友達と,夫婦で",
+    genres: "ランチ",
+    tags: "公式URL確認,要確認,β版下書き",
+    recommendedFor: "solo,kids,family,friends,couple",
+    reasons: "公式URLを確認してから使うβ版の下書き候補です。",
+    targetStores: storeName || "要確認",
+    targetProducts: "要確認",
+    officialSiteUrl: officialUrl || "要確認",
+    sourceType: "公式URL確認",
+    checkedAt: todayDateText(),
+    confidence: "要確認",
+    caution,
+    isVisible: "TRUE",
+    priority: "",
+    memo: "管理者用下書き。公式情報を確認してから公開してください。",
+  };
+}
+
+function rowToTabSeparatedText(row) {
+  return draftColumnOrder.map((column) => String(row[column] || "").replace(new RegExp("[\\t\\r\\n]+", "g"), " ")).join("	");
+}
+
+function createDraftData(event) {
+  event.preventDefault();
+  const row = buildDraftRow();
+  draftOutput.value = rowToTabSeparatedText(row);
+  draftMessage.textContent = "スプレッドシートに貼り付ける1行データを作成しました。";
+}
+
+async function copyDraftData() {
+  if (!draftOutput.value) {
+    draftMessage.textContent = "先にスプレッドシート用データを作ってください。";
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(draftOutput.value);
+    draftMessage.textContent = "コピーしました。Googleスプレッドシートに貼り付けできます。";
+  } catch (error) {
+    draftOutput.focus();
+    draftOutput.select();
+    draftMessage.textContent = "コピーできない場合は、出力データを選択して手動でコピーしてください。";
+  }
+}
+
+if (adminDraftForm) {
+  adminDraftForm.addEventListener("submit", createDraftData);
+}
+
+if (copyDraftButton) {
+  copyDraftButton.addEventListener("click", copyDraftData);
+}
 
 loadCampaignsFromCsv().then(refreshCampaignViews);

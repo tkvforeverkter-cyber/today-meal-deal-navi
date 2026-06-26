@@ -34,6 +34,7 @@
           <div class="location-copy">
             <p class="location-status" id="locationStatus">現在地：未設定</p>
             <p class="location-detail" id="locationDetail">近い順はデモ距離で表示しています。現在地を使うと、より正確な距離表示になります。</p>
+            <p class="privacy-note location-privacy-note">現在地は、近い順の表示にのみ使用します。現在地情報は保存しません。</p>
             <p class="data-source-status" id="dataSourceStatus">データ取得：確認中</p>
           </div>
         </div>
@@ -136,10 +137,86 @@
         <p class="sort-note" id="sortNote">ダミー距離を使って近い順で表示しています。</p>
         <div class="results" id="results"></div>
       </section>
+      <section class="admin-draft-section" aria-label="管理者用キャンペーン下書き作成">
+        <details class="admin-draft">
+          <summary>管理者用：キャンペーン下書き作成</summary>
+          <div class="admin-draft-body">
+            <p class="admin-draft-help">公式URLやキャンペーン名を入力すると、Googleスプレッドシートに貼り付けやすい1行データを作れます。</p>
+            <form class="admin-draft-form" id="adminDraftForm">
+              <div class="admin-draft-grid">
+                <label>
+                  <span>公式キャンペーンURL</span>
+                  <input id="draftOfficialUrl" type="url" placeholder="https://example.com/campaign" />
+                </label>
+                <label>
+                  <span>チェーン名</span>
+                  <input id="draftChainName" type="text" placeholder="ガスト" />
+                </label>
+                <label>
+                  <span>店舗名</span>
+                  <input id="draftStoreName" type="text" placeholder="ガスト 岐阜北方店" />
+                </label>
+                <label>
+                  <span>キャンペーン名</span>
+                  <input id="draftCampaignTitle" type="text" placeholder="アプリクーポン確認用" />
+                </label>
+                <label>
+                  <span>期限</span>
+                  <input id="draftDeadline" type="text" placeholder="2026年7月31日まで / 要確認" />
+                </label>
+                <label>
+                  <span>決済方法</span>
+                  <input id="draftPaymentMethods" type="text" placeholder="公式アプリ, PayPay, 店舗で要確認" />
+                </label>
+                <label class="admin-draft-wide">
+                  <span>注意点</span>
+                  <textarea id="draftCaution" rows="3" placeholder="利用条件や対象外店舗など"></textarea>
+                </label>
+              </div>
+              <div class="admin-draft-actions">
+                <button type="submit">スプレッドシート用データを作る</button>
+                <button type="button" id="copyDraftButton">コピーする</button>
+              </div>
+            </form>
+            <label class="admin-draft-output-label" for="draftOutput">出力データ</label>
+            <textarea id="draftOutput" class="admin-draft-output" rows="4" readonly placeholder="ここにタブ区切りデータが表示されます"></textarea>
+            <p class="admin-draft-message" id="draftMessage" aria-live="polite"></p>
+          </div>
+        </details>
+      </section>
+
       <footer class="demo-footer">
-        <p>掲載情報はテスト版のデモです。実際に利用する前に、必ず公式サイトや店舗で条件をご確認ください。</p>
-        <a class="feedback-button" href="https://docs.google.com/forms/d/e/1FAIpQLSfWzcBeJMHIrnQO2guwHbsOVu5vWxpzfZCyQUQLJi0SdrGuzg/viewform?usp=publish-editor" target="_blank" rel="noreferrer">感想を送る</a>
+        <p>β版の改善のため、1分だけ感想を送ってもらえると嬉しいです。</p>
+        <a class="feedback-button" href="https://docs.google.com/forms/d/e/1FAIpQLSfWzcBeJMHIrnQO2guwHbsOVu5vWxpzfZCyQUQLJi0SdrGuzg/viewform?usp=dialog" target="_blank" rel="noreferrer">感想を送る</a>
       </footer>
+      <section class="about-section" aria-label="このアプリについて">
+        <div class="section-title compact-title">
+          <div>
+            <p class="eyebrow">About</p>
+            <h2>このアプリについて</h2>
+          </div>
+        </div>
+        <p>今日の外食トクナビは、誰と・何を食べたいかを選ぶと、近くて使いやすそうな外食候補を探せるβ版アプリです。</p>
+      </section>
+
+      <section class="privacy-section" aria-label="プライバシー・注意事項">
+        <div class="section-title compact-title">
+          <div>
+            <p class="eyebrow">Privacy</p>
+            <h2>プライバシー・注意事項</h2>
+          </div>
+        </div>
+        <ul class="privacy-list">
+          <li>このアプリはβ版です。</li>
+          <li>掲載情報にはサンプルや要確認データが含まれます。</li>
+          <li>実際に利用する前に公式サイト、公式アプリ、店舗で最新条件を確認してください。</li>
+          <li>位置情報は近い順表示のために使用します。</li>
+          <li>位置情報はサーバーに保存しません。</li>
+          <li>このアプリはログイン不要です。</li>
+          <li>個人情報の入力は不要です。</li>
+        </ul>
+      </section>
+
     </main>
 
     <div class="modal" id="detailModal" aria-hidden="true">
@@ -156,6 +233,6 @@
       </section>
     </div>
 
-    <script src="script.js?v=beta-final-20260626b"></script>
+    <script src="script.js?v=admin-draft-20260627b"></script>
   </body>
 </html>

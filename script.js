@@ -644,8 +644,8 @@ const campaignData = [
     storeName: "ガスト 岐阜北方店",
     storeArea: "北方町",
     address: "岐阜県本巣郡北方町平成8-25",
-    latitude: null,
-    longitude: null,
+    latitude: null, // ここに緯度を入力します（例: 35.123456）
+    longitude: null, // ここに経度を入力します（例: 136.123456）
     mapKeyword: "ガスト 岐阜北方店",
     genre: "family-restaurant",
     genreLabel: "ファミレス",
@@ -680,8 +680,8 @@ const campaignData = [
     storeName: "マクドナルド 本巣五反田店",
     storeArea: "本巣市",
     address: "岐阜県本巣市春近134-1",
-    latitude: null,
-    longitude: null,
+    latitude: null, // ここに緯度を入力します（例: 35.123456）
+    longitude: null, // ここに経度を入力します（例: 136.123456）
     mapKeyword: "マクドナルド 本巣五反田店",
     genre: "takeout",
     genreLabel: "テイクアウト",
@@ -717,8 +717,8 @@ const campaignData = [
     storeName: "コメダ珈琲店 岐阜穂積店",
     storeArea: "瑞穂市",
     address: "岐阜県瑞穂市馬場春雨町1-22",
-    latitude: null,
-    longitude: null,
+    latitude: null, // ここに緯度を入力します（例: 35.123456）
+    longitude: null, // ここに経度を入力します（例: 136.123456）
     mapKeyword: "コメダ珈琲店 岐阜穂積店",
     genre: "cafe",
     genreLabel: "カフェ",
@@ -753,8 +753,8 @@ const campaignData = [
     storeName: "丸亀製麺 岐阜北",
     storeArea: "岐阜市",
     address: "岐阜県岐阜市則武東3-15-15",
-    latitude: null,
-    longitude: null,
+    latitude: null, // ここに緯度を入力します（例: 35.123456）
+    longitude: null, // ここに経度を入力します（例: 136.123456）
     mapKeyword: "丸亀製麺 岐阜北",
     genre: "lunch",
     genreLabel: "ランチ",
@@ -789,8 +789,8 @@ const campaignData = [
     storeName: "すき家 岐阜北方店",
     storeArea: "北方町",
     address: "岐阜県本巣郡北方町平成4-3",
-    latitude: null,
-    longitude: null,
+    latitude: null, // ここに緯度を入力します（例: 35.123456）
+    longitude: null, // ここに経度を入力します（例: 136.123456）
     mapKeyword: "すき家 岐阜北方店",
     genre: "lunch",
     genreLabel: "ランチ",
@@ -824,8 +824,8 @@ const campaignData = [
     storeName: "スシロー 北方店",
     storeArea: "北方町",
     address: "岐阜県本巣郡北方町高屋清流4丁目32番地",
-    latitude: null,
-    longitude: null,
+    latitude: null, // ここに緯度を入力します（例: 35.123456）
+    longitude: null, // ここに経度を入力します（例: 136.123456）
     mapKeyword: "スシロー 北方店",
     genre: "sushi",
     genreLabel: "回転寿司",
@@ -860,8 +860,8 @@ const campaignData = [
     storeName: "くら寿司 岐阜正木店",
     storeArea: "岐阜市",
     address: "岐阜県岐阜市正木西町1-20",
-    latitude: null,
-    longitude: null,
+    latitude: null, // ここに緯度を入力します（例: 35.123456）
+    longitude: null, // ここに経度を入力します（例: 136.123456）
     mapKeyword: "くら寿司 岐阜正木店",
     genre: "sushi",
     genreLabel: "回転寿司",
@@ -896,8 +896,8 @@ const campaignData = [
     storeName: "サイゼリヤ モレラ岐阜店",
     storeArea: "本巣市",
     address: "岐阜県本巣市三橋1100 モレラ岐阜1F",
-    latitude: null,
-    longitude: null,
+    latitude: null, // ここに緯度を入力します（例: 35.123456）
+    longitude: null, // ここに経度を入力します（例: 136.123456）
     mapKeyword: "サイゼリヤ モレラ岐阜店",
     genre: "family-restaurant",
     genreLabel: "ファミレス",
@@ -932,8 +932,8 @@ const campaignData = [
     storeName: "バーミヤン 岐阜公園前店",
     storeArea: "岐阜市",
     address: "岐阜県岐阜市大宮町1-1",
-    latitude: null,
-    longitude: null,
+    latitude: null, // ここに緯度を入力します（例: 35.123456）
+    longitude: null, // ここに経度を入力します（例: 136.123456）
     mapKeyword: "バーミヤン 岐阜公園前店",
     genre: "family-restaurant",
     genreLabel: "ファミレス",
@@ -968,8 +968,8 @@ const campaignData = [
     storeName: "ジョイフル 岐阜北方店",
     storeArea: "北方町",
     address: "岐阜県本巣郡北方町栄町1丁目100番",
-    latitude: null,
-    longitude: null,
+    latitude: null, // ここに緯度を入力します（例: 35.123456）
+    longitude: null, // ここに経度を入力します（例: 136.123456）
     mapKeyword: "ジョイフル 岐阜北方店",
     genre: "family-restaurant",
     genreLabel: "ファミレス",
@@ -1171,6 +1171,22 @@ function mapsUrl(campaign) {
   return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(campaign.mapKeyword || campaign.storeName || campaign.chainName);
 }
 
+function isUsingCalculatedDistance(campaign) {
+  return Boolean(currentPosition) && hasCoordinates(campaign);
+}
+
+function distanceValueText(campaign) {
+  return isUsingCalculatedDistance(campaign)
+    ? "現在地から約" + campaign.distanceKm + "km"
+    : "約" + campaign.distanceKm + "km";
+}
+
+function distanceSourceText(campaign) {
+  return isUsingCalculatedDistance(campaign)
+    ? "現在地から計算"
+    : "距離はデモ表示です";
+}
+
 function reasonFor(campaign, companion) {
   return campaign.reasons[companion] || campaign.reasons[campaign.recommendedFor[0]];
 }
@@ -1190,7 +1206,7 @@ function createCampaignCard(campaign, companion, options = {}) {
     '</div>',
     '<div class="score-row" aria-label="並び替えに使う情報">',
     '<div class="score-item"><span class="score-label">お得度</span><span class="score-value">' + campaign.dealScore + '点</span></div>',
-    '<div class="score-item"><span class="score-label">距離</span><span class="score-value">約' + campaign.distanceKm + 'km</span></div>',
+    '<div class="score-item"><span class="score-label">距離</span><span class="score-value">' + distanceValueText(campaign) + '</span><span class="distance-source">' + distanceSourceText(campaign) + '</span></div>',
     '<div class="score-item"><span class="score-label">終了</span><span class="score-value">' + campaign.deadline.replace("本日", "") + '</span></div>',
     '</div>',
     '<div class="deadline-badge"><span>' + (isHighlight ? campaign.urgency : campaign.deadline) + '</span><span>今日終了</span></div>',
@@ -1225,7 +1241,7 @@ function createTopPickCard(campaign, index) {
     '<div class="reason-box"><p class="reason-label">おすすめ理由</p><p class="reason">' + reasonFor(campaign, campaign.recommendedFor[0]) + '</p></div>',
     '<div class="score-row" aria-label="おすすめ3選の判断材料">',
     '<div class="score-item"><span class="score-label">お得度</span><span class="score-value">' + campaign.dealScore + '点</span></div>',
-    '<div class="score-item"><span class="score-label">距離</span><span class="score-value">約' + campaign.distanceKm + 'km</span></div>',
+    '<div class="score-item"><span class="score-label">距離</span><span class="score-value">' + distanceValueText(campaign) + '</span><span class="distance-source">' + distanceSourceText(campaign) + '</span></div>',
     '<div class="score-item"><span class="score-label">終了</span><span class="score-value">' + campaign.deadline.replace("本日", "") + '</span></div>',
     '</div>',
     '<div class="deadline-badge"><span>' + campaign.urgency + '</span><span>今日終了</span></div>',
@@ -1279,7 +1295,7 @@ function sortCampaigns(campaigns, sortType) {
 
 function sortCampaignMatches(scoredCampaigns, sortType) {
   return [...scoredCampaigns]
-    .sort((a, b) => b.relevance - a.relevance || compareCampaigns(a.campaign, b.campaign, sortType))
+    .sort((a, b) => compareCampaigns(a.campaign, b.campaign, sortType) || b.relevance - a.relevance)
     .map((item) => item.campaign);
 }
 
@@ -1467,6 +1483,7 @@ function openDetailModal(campaign) {
     '<div><dt>使える決済方法</dt><dd>' + campaign.paymentMethods + '</dd></div>',
     '<div><dt>店舗エリア</dt><dd>' + campaign.storeArea + '</dd></div>',
     '<div><dt>住所</dt><dd>' + campaign.address + '</dd></div>',
+    '<div><dt>距離</dt><dd>' + distanceValueText(campaign) + '<br><span class="distance-source">' + distanceSourceText(campaign) + '</span></dd></div>',
     '<div><dt>お得の種類</dt><dd>' + campaign.discountType + '</dd></div>',
     '<div><dt>終了期限</dt><dd>' + campaign.deadline + '</dd></div>',
     '<div><dt>注意点</dt><dd>' + campaign.caution + '</dd></div>',

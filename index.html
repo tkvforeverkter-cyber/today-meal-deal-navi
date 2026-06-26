@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>今日の外食トクナビ</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="hero" aria-label="検索条件">
+        <div class="hero-copy">
+          <p class="eyebrow">Today Meal Deal Finder</p>
+          <div class="demo-label">デモ版：現在はサンプルデータで表示しています</div>
+          <h1>今日の外食トクナビ</h1>
+          <p class="lead">
+            誰と行くか・何を食べたいかを選ぶと、近くてお得な外食候補を提案します。今はサンプルデータで体験できるデモ版です。
+          </p>
+        </div>
+
+        <div class="location-panel" aria-label="現在地">
+          <button class="location-button" id="locationButton" type="button">📍 現在地を使用する</button>
+          <div class="location-copy">
+            <p class="location-status" id="locationStatus">現在地：未設定</p>
+            <p class="location-detail" id="locationDetail">現在地を使うと、近い順の表示に使えます。現在は距離はデモ表示です。</p>
+          </div>
+        </div>
+
+        <form class="search-box" id="searchForm">
+          <div class="filters">
+            <div class="field">
+              <label for="companionSelect">誰と行く？</label>
+              <select id="companionSelect" name="companion">
+                <option value="solo">ひとり</option>
+                <option value="kids">子どもと</option>
+                <option value="family">家族で</option>
+                <option value="friends">友達と</option>
+                <option value="couple">夫婦で</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="foodSelect">何を食べたい？</label>
+              <select id="foodSelect" name="food">
+                <option value="all">なんでも</option>
+                <option value="lunch">ランチ</option>
+                <option value="cafe">カフェ</option>
+                <option value="family-restaurant">ファミレス</option>
+                <option value="sushi">回転寿司</option>
+                <option value="ramen">ラーメン</option>
+                <option value="yakiniku">焼肉</option>
+                <option value="takeout">テイクアウト</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="sortSelect">表示順</label>
+              <select id="sortSelect" name="sort">
+                <option value="near">近い順</option>
+                <option value="deal">お得順</option>
+                <option value="endingToday">今日終了順</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit">候補を探す</button>
+        </form>
+      </section>
+
+      <section class="top-picks" aria-label="今日のおすすめ3選">
+        <div class="section-title top-picks-title">
+          <div>
+            <p class="eyebrow">Editor Picks</p>
+            <h2>今日のおすすめ3選</h2>
+            <p class="section-description">迷ったらまずここ。今日使いやすいお得をピックアップしました。</p>
+          </div>
+          <p>3件</p>
+        </div>
+        <div class="results top-picks-results" id="topPicksResults"></div>
+      </section>
+
+      <section class="saved-section" aria-label="あとで見る">
+        <div class="section-title">
+          <h2>⭐ あとで見る</h2>
+          <p id="savedCount">0件</p>
+        </div>
+        <div class="results saved-results" id="savedResults"></div>
+      </section>
+
+      <section class="today-ending" aria-label="今日終了">
+        <div class="section-title">
+          <h2>🔥 今日終了</h2>
+          <p>3件</p>
+        </div>
+        <div class="results highlight-results" id="todayEndingResults"></div>
+      </section>
+
+      <section class="results-section" aria-label="検索結果">
+        <div class="section-title result-heading">
+          <div>
+            <p class="eyebrow">Recommendation</p>
+            <h2 id="recommendationTitle">ひとりで行ける外食のお得候補</h2>
+          </div>
+          <p id="resultCount">0件</p>
+        </div>
+        <p class="sort-note" id="sortNote">ダミー距離を使って近い順で表示しています。</p>
+        <div class="results" id="results"></div>
+      </section>
+      <footer class="demo-footer">掲載情報はデモです。実際に利用する前に、必ず公式サイトや店舗で条件をご確認ください。</footer>
+    </main>
+
+    <div class="modal" id="detailModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close-modal></div>
+      <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Campaign Detail</p>
+            <h2 id="modalTitle">キャンペーン詳細</h2>
+          </div>
+          <button class="icon-button" type="button" aria-label="閉じる" data-close-modal>×</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+      </section>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

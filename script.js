@@ -1101,6 +1101,43 @@ let campaignData = [
 // 例: const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/.../export?format=csv&gid=0";
 const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSYLSLEeIfTuIxtr93I5FT_M3V7R-0_YiaXK48GjeGCU79kn-Ju2GhxKtte3hn4_fgBBGwc31IUm-JV/pub?gid=2118753398&single=true&output=csv";
 
+const EXPECTED_CSV_HEADERS = [
+  "id",
+  "chainName",
+  "storeName",
+  "storeArea",
+  "address",
+  "latitude",
+  "longitude",
+  "mapKeyword",
+  "campaignTitle",
+  "campaignSummary",
+  "discountType",
+  "dealScore",
+  "paymentMethods",
+  "deadline",
+  "isEndingToday",
+  "companions",
+  "genres",
+  "tags",
+  "recommendedFor",
+  "reasons",
+  "targetStores",
+  "targetProducts",
+  "officialSiteUrl",
+  "sourceType",
+  "checkedAt",
+  "confidence",
+  "caution",
+];
+
+const OPTIONAL_CSV_HEADERS = [
+  "isVisible",
+  "priority",
+  "memo",
+];
+
+
 
 function updateDataSourceStatus(sourceLabel) {
   if (!dataSourceStatus) {
@@ -1161,6 +1198,16 @@ function parseCsvText(csvText) {
   return rows;
 }
 
+function normalizeCsvHeader(header) {
+  const text = String(header || "").trim();
+
+  if (text.charCodeAt(0) === 0xFEFF) {
+    return text.slice(1).trim();
+  }
+
+  return text;
+}
+
 function csvToObjects(csvText) {
   const rows = parseCsvText(csvText);
 
@@ -1168,7 +1215,25 @@ function csvToObjects(csvText) {
     return [];
   }
 
-  const headers = rows[0].map((header) => header.trim());
+  const headers = rows[0].map((header) => normalizeCsvHeader(header));
+
+  // スプレッドシートのA1が空白になっていた場合は、1列目をidとして扱います。
+  if (!headers.includes("id") && headers[0] === "") {
+    headers[0] = "id";
+  }
+
+  const missingHeaders = EXPECTED_CSV_HEADERS.filter((header) => !headers.includes(header));
+
+  if (missingHeaders.length > 0) {
+    throw new Error("CSVの列名が足りません: " + missingHeaders.join(", "));
+  }
+
+  OPTIONAL_CSV_HEADERS.forEach((header) => {
+    if (!headers.includes(header)) {
+      headers.push(header);
+    }
+  });
+
   return rows.slice(1).map((row) => {
     return headers.reduce((object, header, index) => {
       object[header] = (row[index] || "").trim();
@@ -1218,6 +1283,29 @@ function parseFlexibleBoolean(value) {
   }
 
   return false;
+}
+
+function parseVisibility(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+
+  if (normalized === "") {
+    return true;
+  }
+
+  if (["false", "0", "no", "n", "いいえ", "×", "非表示"].includes(normalized)) {
+    return false;
+  }
+
+  return true;
+}
+
+function parsePriority(value) {
+  if (value === null || value === undefined || String(value).trim() === "") {
+    return null;
+  }
+
+  const numberValue = Number(value);
+  return Number.isFinite(numberValue) ? numberValue : null;
 }
 
 function genreValueFromLabel(label) {
@@ -1349,12 +1437,16 @@ function campaignFromCsvRow(row) {
     reasons: reasonsFromCsv(row.reasons, finalRecommendedFor),
     targetStores: row.targetStores || "要確認",
     targetProducts: row.targetProducts || "要確認",
+    isVisible: parseVisibility(row.isVisible),
+    priority: parsePriority(row.priority),
+    memo: row.memo || "",
   };
 }
 
 function campaignsFromCsv(csvText) {
   return csvToObjects(csvText)
     .map(campaignFromCsvRow)
+    .filter((campaign) => campaign.isVisible !== false)
     .filter((campaign) => campaign.id && campaign.storeName && campaign.campaignTitle);
 }
 
@@ -1389,7 +1481,7 @@ async function loadCampaignsFromCsv() {
     setupCampaignRuntimeData();
     updateDataSourceStatus("スプレッドシート");
   } catch (error) {
-    console.warn("CSV読み込みに失敗したため、script.js内のcampaignDataを使います。", error);
+    console.error("CSV読み込みに失敗したため、script.js内のcampaignDataを使います。", error);
     setupCampaignRuntimeData();
     updateDataSourceStatus("内蔵デモデータ");
   }
@@ -1793,9 +1885,28 @@ function topPickScore(campaign) {
   return score;
 }
 
+function hasPriority(campaign) {
+  return Number.isFinite(campaign.priority);
+}
+
+function compareTopPickPriority(a, b) {
+  const aHasPriority = hasPriority(a);
+  const bHasPriority = hasPriority(b);
+
+  if (aHasPriority && bHasPriority && a.priority !== b.priority) {
+    return a.priority - b.priority;
+  }
+
+  if (aHasPriority !== bHasPriority) {
+    return aHasPriority ? -1 : 1;
+  }
+
+  return topPickScore(b) - topPickScore(a);
+}
+
 function showTopPicks() {
   const topPicks = [...campaignData]
-    .sort((a, b) => topPickScore(b) - topPickScore(a))
+    .sort(compareTopPickPriority)
     .slice(0, 3);
 
   topPicksResults.innerHTML = topPicks.map(createTopPickCard).join("");

@@ -137,11 +137,12 @@
         <p class="sort-note" id="sortNote">ダミー距離を使って近い順で表示しています。</p>
         <div class="results" id="results"></div>
       </section>
-      <section class="admin-draft-section" aria-label="管理者用キャンペーン下書き作成">
+      <section class="admin-draft-section" aria-label="管理者用キャンペーン下書き作成" hidden>
         <details class="admin-draft">
           <summary>管理者用：キャンペーン下書き作成</summary>
           <div class="admin-draft-body">
             <p class="admin-draft-help">この欄は運営者向けです。一般ユーザーは使う必要はありません。キャンペーンURLと基本情報を送ると、Google Apps Script経由でスプレッドシートに要確認データを追加できます。</p>
+            <p class="admin-endpoint-check">現在の送信先URL：<span id="gasEndpointText"></span></p>
             <form class="admin-draft-form" id="adminDraftForm">
               <div class="admin-draft-grid simple-draft-grid">
                 <label class="admin-draft-wide">
@@ -293,6 +294,6 @@
       </section>
     </div>
 
-    <script src="script.js?v=gas-raw-url-20260627"></script>
+    <script src="script.js?v=campaign-title-display-20260627"></script>
   </body>
 </html>

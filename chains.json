@@ -1,0 +1,182 @@
+[
+  {
+    "id": "mcdonalds",
+    "name": "マクドナルド",
+    "genre": "fast-food",
+    "campaignUrl": "https://www.mcdonalds.co.jp/campaign/",
+    "officialSite": "https://www.mcdonalds.co.jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "gusto",
+    "name": "ガスト",
+    "genre": "family-restaurant",
+    "campaignUrl": "https://www.gusto.com/jp/",
+    "officialSite": "https://www.gusto.com/jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "bamiyan",
+    "name": "バーミヤン",
+    "genre": "family-restaurant",
+    "campaignUrl": "https://www.bamiyan.co.jp/",
+    "officialSite": "https://www.bamiyan.co.jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "kura-sushi",
+    "name": "くら寿司",
+    "genre": "sushi",
+    "campaignUrl": "https://www.kurasushi.co.jp/",
+    "officialSite": "https://www.kurasushi.co.jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "sushiro",
+    "name": "スシロー",
+    "genre": "sushi",
+    "campaignUrl": "https://www.sushiro.co.jp/",
+    "officialSite": "https://www.sushiro.co.jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "hamazushi",
+    "name": "はま寿司",
+    "genre": "sushi",
+    "campaignUrl": "https://www.hama-sushi.co.jp/",
+    "officialSite": "https://www.hama-sushi.co.jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "kappa-sushi",
+    "name": "かっぱ寿司",
+    "genre": "sushi",
+    "campaignUrl": "https://www.kappasushi.jp/",
+    "officialSite": "https://www.kappasushi.jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "uobei",
+    "name": "魚べい",
+    "genre": "sushi",
+    "campaignUrl": "https://uobei.com/",
+    "officialSite": "https://uobei.com/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "komeda",
+    "name": "コメダ珈琲店",
+    "genre": "cafe",
+    "campaignUrl": "https://www.komeda.co.jp/",
+    "officialSite": "https://www.komeda.co.jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "saizeriya",
+    "name": "サイゼリヤ",
+    "genre": "family-restaurant",
+    "campaignUrl": "https://www.saizeriya.co.jp/",
+    "officialSite": "https://www.saizeriya.co.jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "joyfull",
+    "name": "ジョイフル",
+    "genre": "family-restaurant",
+    "campaignUrl": "https://www.joyfull.co.jp/",
+    "officialSite": "https://www.joyfull.co.jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "marugame",
+    "name": "丸亀製麺",
+    "genre": "udon",
+    "campaignUrl": "https://www.marugame-seimen.com/",
+    "officialSite": "https://www.marugame-seimen.com/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "hanamaru-udon",
+    "name": "はなまるうどん",
+    "genre": "udon",
+    "campaignUrl": "https://www.hanamaruudon.com/",
+    "officialSite": "https://www.hanamaruudon.com/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "sukiya",
+    "name": "すき家",
+    "genre": "beef-bowl",
+    "campaignUrl": "https://www.sukiya.jp/",
+    "officialSite": "https://www.sukiya.jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "matsuya",
+    "name": "松屋",
+    "genre": "beef-bowl",
+    "campaignUrl": "https://www.matsuyafoods.co.jp/",
+    "officialSite": "https://www.matsuyafoods.co.jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "yoshinoya",
+    "name": "吉野家",
+    "genre": "beef-bowl",
+    "campaignUrl": "https://www.yoshinoya.com/",
+    "officialSite": "https://www.yoshinoya.com/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "mos-burger",
+    "name": "モスバーガー",
+    "genre": "burger",
+    "campaignUrl": "https://www.mosburger.com/jp/",
+    "officialSite": "https://www.mosburger.com/jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "kfc",
+    "name": "ケンタッキー",
+    "genre": "fast-food",
+    "campaignUrl": "https://www.kfc.co.jp/",
+    "officialSite": "https://www.kfc.co.jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "burger-king",
+    "name": "バーガーキング",
+    "genre": "fast-food",
+    "campaignUrl": "https://www.burgerking.jp/",
+    "officialSite": "https://www.burgerking.jp/",
+    "nationwide": true,
+    "enabled": true
+  },
+  {
+    "id": "lotteria",
+    "name": "ロッテリア",
+    "genre": "fast-food",
+    "campaignUrl": "https://www.lotteria.com/",
+    "officialSite": "https://www.lotteria.com/",
+    "nationwide": true,
+    "enabled": true
+  }
+]

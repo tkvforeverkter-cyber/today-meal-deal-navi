@@ -2315,7 +2315,59 @@ const draftOutput = document.querySelector("#draftOutput");
 const copyDraftButton = document.querySelector("#copyDraftButton");
 const sendDraftButton = document.querySelector("#sendDraftButton");
 const draftMessage = document.querySelector("#draftMessage");
+const draftChainSelect = document.querySelector("#draftChainName");
 const GAS_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbwqLtKcxI2g6YN0WKNWs_TOgGbfgLW7mEmzSyvJ2UHZkozhDfQYL_GU-_QmBEvpf6u9/exec";
+let chainMasterList = [];
+
+function populateChainSelect(chains) {
+  if (!draftChainSelect) {
+    return;
+  }
+
+  const currentValue = draftChainSelect.value || "";
+  draftChainSelect.innerHTML = "";
+
+  const placeholderOption = document.createElement("option");
+  placeholderOption.value = "";
+  placeholderOption.textContent = "選択してください";
+  draftChainSelect.appendChild(placeholderOption);
+
+  const otherOption = document.createElement("option");
+  otherOption.value = "その他";
+  otherOption.textContent = "その他";
+  draftChainSelect.appendChild(otherOption);
+
+  (chains || []).forEach((chain) => {
+    const option = document.createElement("option");
+    option.value = chain.name;
+    option.textContent = chain.name;
+    draftChainSelect.appendChild(option);
+  });
+
+  if (currentValue && [...draftChainSelect.options].some((option) => option.value === currentValue)) {
+    draftChainSelect.value = currentValue;
+  }
+}
+
+async function loadChainMaster() {
+  try {
+    const response = await fetch("chains.json", { cache: "no-store" });
+
+    if (!response.ok) {
+      throw new Error("チェーンマスターの読み込みに失敗しました");
+    }
+
+    const chains = await response.json();
+    chainMasterList = Array.isArray(chains)
+      ? chains.filter((chain) => chain && chain.enabled !== false)
+      : [];
+    populateChainSelect(chainMasterList);
+  } catch (error) {
+    console.warn("チェーンマスターの読み込みに失敗したため、既定の選択肢を使います。", error);
+    chainMasterList = [];
+    populateChainSelect([]);
+  }
+}
 
 const draftColumnOrder = [
   "id",
@@ -2556,3 +2608,5 @@ loadCampaignsFromCsv().then(() => {
   restoreSearchPreferences();
   refreshCampaignViews();
 });
+
+loadChainMaster();

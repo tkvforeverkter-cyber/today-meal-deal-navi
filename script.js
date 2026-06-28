@@ -1532,12 +1532,24 @@ const genreSearchLabels = {
 };
 
 const sortLabels = {
-  near: "近い順",
+  recommended: "おすすめ順",
   deal: "お得順",
   endingToday: "今日終了順",
 };
 
+const regionLabels = {
+  all: "すべて",
+  gifu: "岐阜市",
+  motsu: "本巣市",
+  kitakata: "北方町",
+  mizuhou: "瑞穂市",
+  kagamihara: "各務原市",
+  ogaki: "大垣市",
+};
+
 const searchPreferenceStorageKey = "mealDealSearchPreferencesV08";
+const validRegionValues = new Set(Object.keys(regionLabels));
+const validSortValues = new Set(Object.keys(sortLabels));
 
 const app = document.querySelector(".app");
 const form = document.querySelector("#searchForm");
@@ -1548,6 +1560,7 @@ const locationDetail = document.querySelector("#locationDetail");
 const dataSourceStatus = document.querySelector("#dataSourceStatus");
 const companionSelect = document.querySelector("#companionSelect");
 const foodSelect = document.querySelector("#foodSelect");
+const regionSelect = document.querySelector("#regionSelect");
 const sortSelect = document.querySelector("#sortSelect");
 const topPicksResults = document.querySelector("#topPicksResults");
 const savedResults = document.querySelector("#savedResults");
@@ -1583,6 +1596,7 @@ function saveSearchPreferences() {
   const preferences = {
     companion: companionSelect.value,
     food: foodSelect.value,
+    region: regionSelect.value,
     sort: sortSelect.value,
   };
 
@@ -1600,8 +1614,16 @@ function restoreSearchPreferences() {
     foodSelect.value = preferences.food;
   }
 
-  if (preferences.sort) {
+  if (preferences.region && validRegionValues.has(preferences.region)) {
+    regionSelect.value = preferences.region;
+  } else {
+    regionSelect.value = "all";
+  }
+
+  if (preferences.sort && validSortValues.has(preferences.sort)) {
     sortSelect.value = preferences.sort;
+  } else {
+    sortSelect.value = "recommended";
   }
 }
 
@@ -1742,12 +1764,20 @@ function isUsingCalculatedDistance(campaign) {
 }
 
 function distanceValueText(campaign) {
+  if (!currentPosition) {
+    return "距離：未取得";
+  }
+
   return isUsingCalculatedDistance(campaign)
     ? "現在地から約" + campaign.distanceKm + "km"
     : "約" + campaign.distanceKm + "km";
 }
 
 function distanceSourceText(campaign) {
+  if (!currentPosition) {
+    return "距離：未取得";
+  }
+
   return isUsingCalculatedDistance(campaign)
     ? "現在地から計算"
     : "距離はデモ表示です";
@@ -1857,25 +1887,71 @@ function matchesFood(campaign, selectedFood) {
   return (campaign.genres || []).includes(selectedLabel) || campaign.genre === selectedFood;
 }
 
+function normalizeSearchText(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function isRegionalGeneralCampaign(campaign) {
+  const storeArea = normalizeSearchText(campaign.storeArea);
+  return storeArea.includes("全国") || storeArea === "要確認" || storeArea === "";
+}
+
+function matchesRegion(campaign, selectedRegion) {
+  if (selectedRegion === "all") {
+    return true;
+  }
+
+  if (isRegionalGeneralCampaign(campaign)) {
+    return true;
+  }
+
+  const regionName = regionLabels[selectedRegion];
+  const haystack = [campaign.storeArea, campaign.address].filter(Boolean).join(" ");
+  return normalizeSearchText(haystack).includes(normalizeSearchText(regionName));
+}
+
 function searchRelevance(campaign) {
   let score = 0;
 
   if (matchesCompanion(campaign, companionSelect.value)) score += 2;
   if (foodSelect.value === "all") score += 1;
   if (foodSelect.value !== "all" && matchesFood(campaign, foodSelect.value)) score += 2;
+  if (regionSelect.value !== "all") {
+    if (matchesRegion(campaign, regionSelect.value)) score += 4;
+    if (isRegionalGeneralCampaign(campaign)) score += 1;
+  }
 
   return score;
 }
 
 function filterCampaignsForCurrentSelection(campaigns) {
-  return campaigns.filter((campaign) => {
+  const visibleCampaigns = campaigns.filter((campaign) => {
     const companionMatch = matchesCompanion(campaign, companionSelect.value);
     const foodMatch = foodSelect.value === "all" || matchesFood(campaign, foodSelect.value);
-    return companionMatch && foodMatch;
+    const regionMatch = regionSelect.value === "all" || matchesRegion(campaign, regionSelect.value);
+    return companionMatch && foodMatch && regionMatch;
   });
+
+  return visibleCampaigns.sort((a, b) => compareCampaigns(a, b, sortSelect.value));
 }
 
 function compareCampaigns(a, b, sortType) {
+  if (regionSelect.value !== "all") {
+    const aMatchesRegion = matchesRegion(a, regionSelect.value) ? 1 : 0;
+    const bMatchesRegion = matchesRegion(b, regionSelect.value) ? 1 : 0;
+
+    if (aMatchesRegion !== bMatchesRegion) {
+      return bMatchesRegion - aMatchesRegion;
+    }
+
+    const aGeneral = isRegionalGeneralCampaign(a) ? 1 : 0;
+    const bGeneral = isRegionalGeneralCampaign(b) ? 1 : 0;
+
+    if (aGeneral !== bGeneral) {
+      return bGeneral - aGeneral;
+    }
+  }
+
   if (sortType === "deal") {
     return b.dealScore - a.dealScore;
   }
@@ -1884,7 +1960,7 @@ function compareCampaigns(a, b, sortType) {
     return Number(b.isEndingToday) - Number(a.isEndingToday) || a.deadlineMinutes - b.deadlineMinutes;
   }
 
-  return a.distanceKm - b.distanceKm;
+  return topPickScore(b) - topPickScore(a);
 }
 
 function sortCampaigns(campaigns, sortType) {
@@ -1905,23 +1981,13 @@ function updateRecommendationTitle() {
 
 function updateSortNote() {
   if (hasSearched) {
-    if (sortSelect.value === "near") {
-      sortNote.textContent = currentPosition
-        ? "現在地から近い順で表示中です。"
-        : "近い順はデモ距離で表示しています。現在地を使うと、より正確な距離表示になります。";
-      sortNote.style.display = "block";
-      return;
-    }
-
     sortNote.textContent = sortLabels[sortSelect.value] + "で表示中。";
     sortNote.style.display = "block";
     return;
   }
 
-  if (sortSelect.value === "near") {
-    sortNote.textContent = currentPosition
-      ? "現在地から近い順で表示できます。"
-      : "近い順はデモ距離で表示しています。現在地を使うと、より正確な距離表示になります。";
+  if (sortSelect.value === "recommended") {
+    sortNote.textContent = "地域選択をメインにし、おすすめ順で見つけやすくしています。";
     sortNote.style.display = "block";
     return;
   }
@@ -1943,6 +2009,7 @@ function updateResultSummary(resultTotal) {
   conditionChips.innerHTML = [
     companionSearchLabels[companionSelect.value],
     genreSearchLabels[foodSelect.value],
+    regionLabels[regionSelect.value],
     sortLabels[sortSelect.value],
   ]
     .map((label) => '<span>' + label + '</span>')
@@ -1958,7 +2025,8 @@ function switchToSearchResults() {
 function resetSearchConditions() {
   companionSelect.value = "solo";
   foodSelect.value = "all";
-  sortSelect.value = "near";
+  regionSelect.value = "all";
+  sortSelect.value = "recommended";
   saveSearchPreferences();
   hasSearched = false;
   app.classList.remove("is-searched");
@@ -1990,6 +2058,15 @@ function compareTopPickPriority(a, b) {
 
   if (aHasPriority !== bHasPriority) {
     return aHasPriority ? -1 : 1;
+  }
+
+  if (regionSelect.value !== "all") {
+    const aMatchesRegion = matchesRegion(a, regionSelect.value) ? 1 : 0;
+    const bMatchesRegion = matchesRegion(b, regionSelect.value) ? 1 : 0;
+
+    if (aMatchesRegion !== bMatchesRegion) {
+      return bMatchesRegion - aMatchesRegion;
+    }
   }
 
   return topPickScore(b) - topPickScore(a);
@@ -2173,10 +2250,10 @@ function handleFilterChange() {
 
 function applyPreset(presetId) {
   const presetValues = {
-    "solo-lunch": { companion: "solo", food: "lunch", sort: "near" },
-    "family-restaurant": { companion: "family", food: "family-restaurant", sort: "deal" },
-    "friends-cafe": { companion: "friends", food: "cafe", sort: "near" },
-    "couple-sushi": { companion: "couple", food: "sushi", sort: "endingToday" },
+    "solo-lunch": { companion: "solo", food: "lunch", region: "all", sort: "recommended" },
+    "family-restaurant": { companion: "family", food: "family-restaurant", region: "all", sort: "deal" },
+    "friends-cafe": { companion: "friends", food: "cafe", region: "all", sort: "recommended" },
+    "couple-sushi": { companion: "couple", food: "sushi", region: "all", sort: "endingToday" },
   };
 
   const values = presetValues[presetId];
@@ -2186,7 +2263,8 @@ function applyPreset(presetId) {
 
   companionSelect.value = values.companion;
   foodSelect.value = values.food;
-  sortSelect.value = values.sort;
+  regionSelect.value = values.region || "all";
+  sortSelect.value = values.sort || "recommended";
   saveSearchPreferences();
   switchToSearchResults();
   showCampaigns();
@@ -2195,6 +2273,7 @@ function applyPreset(presetId) {
 
 companionSelect.addEventListener("change", handleFilterChange);
 foodSelect.addEventListener("change", handleFilterChange);
+regionSelect.addEventListener("change", handleFilterChange);
 sortSelect.addEventListener("change", handleFilterChange);
 
 if (quickPresetList) {

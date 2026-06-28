@@ -30,11 +30,11 @@
         </div>
 
         <div class="location-panel" aria-label="現在地">
-          <button class="location-button" id="locationButton" type="button">📍 現在地を使用する</button>
+          <button class="location-button" id="locationButton" type="button">📍 現在地で探す（実験中）</button>
           <div class="location-copy">
             <p class="location-status" id="locationStatus">現在地：未設定</p>
-            <p class="location-detail" id="locationDetail">近い順はデモ距離で表示しています。現在地を使うと、より正確な距離表示になります。</p>
-            <p class="privacy-note location-privacy-note">現在地は、近い順の表示にのみ使用します。現在地情報は保存しません。</p>
+            <p class="location-detail" id="locationDetail">地域選択をメインにし、現在地は補助機能として使います。位置情報を許可すると距離表示を試せます。</p>
+            <p class="privacy-note location-privacy-note">現在地は補助機能です。地域検索を優先して使えるようにします。位置情報は保存しません。</p>
             <p class="data-source-status" id="dataSourceStatus">データ取得：確認中</p>
           </div>
         </div>
@@ -79,9 +79,22 @@
                     </div>
         
                     <div class="field">
+                      <label for="regionSelect">地域</label>
+                      <select id="regionSelect" name="region">
+                        <option value="all">すべて</option>
+                        <option value="gifu">岐阜市</option>
+                        <option value="motsu">本巣市</option>
+                        <option value="kitakata">北方町</option>
+                        <option value="mizuhou">瑞穂市</option>
+                        <option value="kagamihara">各務原市</option>
+                        <option value="ogaki">大垣市</option>
+                      </select>
+                    </div>
+
+                    <div class="field">
                       <label for="sortSelect">表示順</label>
                       <select id="sortSelect" name="sort">
-                        <option value="near">近い順</option>
+                        <option value="recommended">おすすめ順</option>
                         <option value="deal">お得順</option>
                         <option value="endingToday">今日終了順</option>
                       </select>

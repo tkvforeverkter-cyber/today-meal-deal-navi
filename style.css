@@ -1163,6 +1163,42 @@ button:hover {
   font-weight: 700;
 }
 
+.quick-presets {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.quick-preset-label {
+  color: #2f6ec9;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.quick-preset-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quick-preset-button {
+  width: auto;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d8e4f2;
+  border-radius: 999px;
+  background: #f4f8fd;
+  color: #24508f;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.quick-preset-button:hover {
+  background: #e6f0fb;
+}
+
 .search-box button[type="submit"] {
   min-height: 54px;
   font-size: 16px;
@@ -1232,6 +1268,16 @@ button:hover {
 
   .search-box button[type="submit"] {
     min-height: 56px;
+  }
+
+  .quick-preset-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .quick-preset-button {
+    justify-content: center;
+    border-radius: 8px;
   }
 }
 

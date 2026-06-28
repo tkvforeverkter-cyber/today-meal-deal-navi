@@ -1537,6 +1537,8 @@ const sortLabels = {
   endingToday: "今日終了順",
 };
 
+const searchPreferenceStorageKey = "mealDealSearchPreferencesV08";
+
 const app = document.querySelector(".app");
 const form = document.querySelector("#searchForm");
 const searchSection = document.querySelector(".search-section");
@@ -1561,11 +1563,47 @@ const topPicksSection = document.querySelector(".top-picks");
 const sortNote = document.querySelector("#sortNote");
 const detailModal = document.querySelector("#detailModal");
 const modalBody = document.querySelector("#modalBody");
+const quickPresetList = document.querySelector(".quick-preset-list");
 const savedDealIds = new Set(JSON.parse(localStorage.getItem("savedMealDeals") || "[]"));
 let currentPosition = null;
 let hasSearched = false;
 
 // CSVを使う場合も、手入力データを使う場合も、読み込み後に demoDistanceKm を準備します。
+
+function readStoredSearchPreferences() {
+  try {
+    return JSON.parse(localStorage.getItem(searchPreferenceStorageKey) || "{}");
+  } catch (error) {
+    console.warn("検索条件の復元に失敗しました。", error);
+    return {};
+  }
+}
+
+function saveSearchPreferences() {
+  const preferences = {
+    companion: companionSelect.value,
+    food: foodSelect.value,
+    sort: sortSelect.value,
+  };
+
+  localStorage.setItem(searchPreferenceStorageKey, JSON.stringify(preferences));
+}
+
+function restoreSearchPreferences() {
+  const preferences = readStoredSearchPreferences();
+
+  if (preferences.companion) {
+    companionSelect.value = preferences.companion;
+  }
+
+  if (preferences.food) {
+    foodSelect.value = preferences.food;
+  }
+
+  if (preferences.sort) {
+    sortSelect.value = preferences.sort;
+  }
+}
 
 function saveSavedDeals() {
   localStorage.setItem("savedMealDeals", JSON.stringify([...savedDealIds]));
@@ -1829,6 +1867,14 @@ function searchRelevance(campaign) {
   return score;
 }
 
+function filterCampaignsForCurrentSelection(campaigns) {
+  return campaigns.filter((campaign) => {
+    const companionMatch = matchesCompanion(campaign, companionSelect.value);
+    const foodMatch = foodSelect.value === "all" || matchesFood(campaign, foodSelect.value);
+    return companionMatch && foodMatch;
+  });
+}
+
 function compareCampaigns(a, b, sortType) {
   if (sortType === "deal") {
     return b.dealScore - a.dealScore;
@@ -1913,6 +1959,7 @@ function resetSearchConditions() {
   companionSelect.value = "solo";
   foodSelect.value = "all";
   sortSelect.value = "near";
+  saveSearchPreferences();
   hasSearched = false;
   app.classList.remove("is-searched");
   showCampaigns();
@@ -1949,11 +1996,14 @@ function compareTopPickPriority(a, b) {
 }
 
 function showTopPicks() {
-  const topPicks = [...campaignData]
+  const visibleCampaigns = filterCampaignsForCurrentSelection(campaignData);
+  const topPicks = [...visibleCampaigns]
     .sort(compareTopPickPriority)
     .slice(0, 3);
 
-  topPicksResults.innerHTML = topPicks.map(createTopPickCard).join("");
+  topPicksResults.innerHTML = topPicks.length > 0
+    ? topPicks.map((campaign, index) => createTopPickCard(campaign, index)).join("")
+    : '<p class="empty">この条件ではおすすめ候補がまだ見つかりませんでした。条件を変えて試してください。</p>';
 }
 
 function showSavedCampaigns() {
@@ -1969,12 +2019,14 @@ function showSavedCampaigns() {
 }
 
 function showTodayEndingCampaigns() {
-  const endingCampaigns = sortCampaigns(campaignData.filter((campaign) => campaign.isEndingToday), "endingToday").slice(0, 3);
+  const visibleCampaigns = filterCampaignsForCurrentSelection(campaignData.filter((campaign) => campaign.isEndingToday));
+  const endingCampaigns = sortCampaigns(visibleCampaigns, "endingToday").slice(0, 3);
   todayEndingResults.innerHTML = endingCampaigns.map((campaign) => createCampaignCard(campaign, campaign.recommendedFor[0], { isHighlight: true })).join("");
 }
 
 function showCampaigns() {
-  const scoredCampaigns = campaignData.map((campaign) => {
+  const visibleCampaigns = filterCampaignsForCurrentSelection(campaignData);
+  const scoredCampaigns = visibleCampaigns.map((campaign) => {
     return {
       campaign,
       relevance: searchRelevance(campaign),
@@ -2106,6 +2158,7 @@ function handleDetailClick(event) {
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
+  saveSearchPreferences();
   switchToSearchResults();
   showCampaigns();
   resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -2114,12 +2167,47 @@ form.addEventListener("submit", (event) => {
 resetButton.addEventListener("click", resetSearchConditions);
 
 function handleFilterChange() {
+  saveSearchPreferences();
   refreshCampaignViews();
+}
+
+function applyPreset(presetId) {
+  const presetValues = {
+    "solo-lunch": { companion: "solo", food: "lunch", sort: "near" },
+    "family-restaurant": { companion: "family", food: "family-restaurant", sort: "deal" },
+    "friends-cafe": { companion: "friends", food: "cafe", sort: "near" },
+    "couple-sushi": { companion: "couple", food: "sushi", sort: "endingToday" },
+  };
+
+  const values = presetValues[presetId];
+  if (!values) {
+    return;
+  }
+
+  companionSelect.value = values.companion;
+  foodSelect.value = values.food;
+  sortSelect.value = values.sort;
+  saveSearchPreferences();
+  switchToSearchResults();
+  showCampaigns();
+  resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 companionSelect.addEventListener("change", handleFilterChange);
 foodSelect.addEventListener("change", handleFilterChange);
 sortSelect.addEventListener("change", handleFilterChange);
+
+if (quickPresetList) {
+  quickPresetList.addEventListener("click", (event) => {
+    const presetButton = event.target.closest("[data-preset]");
+
+    if (!presetButton) {
+      return;
+    }
+
+    applyPreset(presetButton.dataset.preset);
+  });
+}
 
 locationButton.addEventListener("click", useCurrentLocation);
 topPicksResults.addEventListener("click", handleDetailClick);
@@ -2385,4 +2473,7 @@ if (copyDraftButton) {
   copyDraftButton.addEventListener("click", copyDraftData);
 }
 
-loadCampaignsFromCsv().then(refreshCampaignViews);
+loadCampaignsFromCsv().then(() => {
+  restoreSearchPreferences();
+  refreshCampaignViews();
+});

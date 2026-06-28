@@ -1926,6 +1926,10 @@ function searchRelevance(campaign) {
 
 function filterCampaignsForCurrentSelection(campaigns) {
   const visibleCampaigns = campaigns.filter((campaign) => {
+    if (!isChainEnabled(campaign.chainName)) {
+      return false;
+    }
+
     const companionMatch = matchesCompanion(campaign, companionSelect.value);
     const foodMatch = foodSelect.value === "all" || matchesFood(campaign, foodSelect.value);
     const regionMatch = regionSelect.value === "all" || matchesRegion(campaign, regionSelect.value);
@@ -2084,7 +2088,7 @@ function showTopPicks() {
 }
 
 function showSavedCampaigns() {
-  const savedCampaigns = campaignData.filter((campaign) => savedDealIds.has(campaign.id));
+  const savedCampaigns = campaignData.filter((campaign) => savedDealIds.has(campaign.id) && isChainEnabled(campaign.chainName));
   savedCount.textContent = savedCampaigns.length + "件";
 
   if (savedCampaigns.length === 0) {
@@ -2310,14 +2314,84 @@ document.addEventListener("keydown", (event) => {
 });
 
 
+const adminPanel = document.querySelector("#adminPanel");
 const adminDraftForm = document.querySelector("#adminDraftForm");
+const chainAdminForm = document.querySelector("#chainAdminForm");
+const chainManagementList = document.querySelector("#chainManagementList");
 const draftOutput = document.querySelector("#draftOutput");
 const copyDraftButton = document.querySelector("#copyDraftButton");
 const sendDraftButton = document.querySelector("#sendDraftButton");
 const draftMessage = document.querySelector("#draftMessage");
 const draftChainSelect = document.querySelector("#draftChainName");
 const GAS_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbwqLtKcxI2g6YN0WKNWs_TOgGbfgLW7mEmzSyvJ2UHZkozhDfQYL_GU-_QmBEvpf6u9/exec";
+const chainStorageKey = "mealDealChainMasterV12";
 let chainMasterList = [];
+
+function normalizeChainNameValue(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function slugifyChainName(value) {
+  return normalizeChainNameValue(value)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    || "chain";
+}
+
+function normalizeChainEntry(chain) {
+  if (!chain || typeof chain !== "object") {
+    return null;
+  }
+
+  return {
+    id: chain.id || slugifyChainName(chain.name || chain.chainName || ""),
+    name: chain.name || chain.chainName || "",
+    genre: chain.genre || chain.genreLabel || "",
+    officialSiteUrl: chain.officialSiteUrl || chain.officialSite || "",
+    campaignListUrl: chain.campaignListUrl || chain.campaignUrl || "",
+    enabled: chain.enabled !== false,
+  };
+}
+
+function findChainIndex(chains, chain) {
+  if (!Array.isArray(chains)) {
+    return -1;
+  }
+
+  const normalizedId = normalizeChainNameValue(chain.id);
+  const normalizedName = normalizeChainNameValue(chain.name);
+
+  return chains.findIndex((item) => {
+    return normalizeChainNameValue(item.id) === normalizedId || normalizeChainNameValue(item.name) === normalizedName;
+  });
+}
+
+function mergeChainMasterLists(remoteChains, localChains) {
+  const merged = [];
+
+  [remoteChains, localChains].forEach((list) => {
+    (Array.isArray(list) ? list : []).forEach((chain) => {
+      const normalized = normalizeChainEntry(chain);
+      if (!normalized || !normalized.name) {
+        return;
+      }
+
+      const existingIndex = findChainIndex(merged, normalized);
+      if (existingIndex >= 0) {
+        merged[existingIndex] = {
+          ...merged[existingIndex],
+          ...normalized,
+          enabled: normalized.enabled !== false,
+        };
+        return;
+      }
+
+      merged.push(normalized);
+    });
+  });
+
+  return merged;
+}
 
 function populateChainSelect(chains) {
   if (!draftChainSelect) {
@@ -2349,6 +2423,110 @@ function populateChainSelect(chains) {
   }
 }
 
+function readStoredChainMaster() {
+  try {
+    const stored = localStorage.getItem(chainStorageKey);
+    const parsed = stored ? JSON.parse(stored) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn("チェーン管理データの読み込みに失敗しました。", error);
+    return [];
+  }
+}
+
+function saveStoredChainMaster(chains) {
+  localStorage.setItem(chainStorageKey, JSON.stringify(chains));
+  chainMasterList = chains;
+  populateChainSelect(chainMasterList);
+  renderChainManagement();
+}
+
+function findChainEntry(chainName) {
+  const normalizedTarget = normalizeChainNameValue(chainName);
+  return chainMasterList.find((chain) => {
+    return normalizeChainNameValue(chain.name) === normalizedTarget || normalizeChainNameValue(chain.id) === normalizedTarget;
+  });
+}
+
+function isChainEnabled(chainName) {
+  const chainEntry = findChainEntry(chainName);
+  return !chainEntry || chainEntry.enabled !== false;
+}
+
+function renderChainManagement() {
+  if (!chainManagementList) {
+    return;
+  }
+
+  if (!chainMasterList.length) {
+    chainManagementList.innerHTML = '<p class="empty">まだ登録されたチェーンがありません。上のフォームから追加できます。</p>';
+    return;
+  }
+
+  chainManagementList.innerHTML = chainMasterList.map((chain) => {
+    return [
+      '<article class="chain-management-item">',
+      '<div class="chain-management-main">',
+      '<strong>' + (chain.name || "名称未設定") + '</strong>',
+      '<span class="chain-management-genre">' + (chain.genre || "未設定") + '</span>',
+      '</div>',
+      '<div class="chain-management-meta">',
+      '<div><span class="chain-meta-label">公式サイト</span><span>' + (chain.officialSiteUrl || "未設定") + '</span></div>',
+      '<div><span class="chain-meta-label">キャンペーン一覧</span><span>' + (chain.campaignListUrl || "未設定") + '</span></div>',
+      '</div>',
+      '<label class="chain-toggle">',
+      '<input type="checkbox" data-chain-toggle="' + chain.id + '" ' + (chain.enabled !== false ? "checked" : "") + ' />',
+      '<span>' + (chain.enabled !== false ? "有効" : "無効") + '</span>',
+      '</label>',
+      '</article>',
+    ].join("");
+  }).join("");
+}
+
+function handleChainAdminSubmit(event) {
+  event.preventDefault();
+
+  const nameInput = document.querySelector("#chainAdminName");
+  const genreInput = document.querySelector("#chainAdminGenre");
+  const officialUrlInput = document.querySelector("#chainAdminOfficialUrl");
+  const campaignUrlInput = document.querySelector("#chainAdminCampaignUrl");
+  const enabledInput = document.querySelector("#chainAdminEnabled");
+
+  const name = nameInput?.value.trim() || "";
+  if (!name) {
+    window.alert("チェーン名を入力してください。");
+    return;
+  }
+
+  const newChain = {
+    id: slugifyChainName(name),
+    name,
+    genre: genreInput?.value.trim() || "",
+    officialSiteUrl: officialUrlInput?.value.trim() || "",
+    campaignListUrl: campaignUrlInput?.value.trim() || "",
+    enabled: enabledInput?.value !== "false",
+  };
+
+  const existingIndex = findChainIndex(chainMasterList, newChain);
+
+  if (existingIndex >= 0) {
+    chainMasterList[existingIndex] = {
+      ...chainMasterList[existingIndex],
+      ...newChain,
+    };
+  } else {
+    chainMasterList.push(newChain);
+  }
+
+  saveStoredChainMaster(chainMasterList);
+  if (chainAdminForm) {
+    chainAdminForm.reset();
+    if (enabledInput) {
+      enabledInput.value = "true";
+    }
+  }
+}
+
 async function loadChainMaster() {
   try {
     const response = await fetch("chains.json", { cache: "no-store" });
@@ -2357,15 +2535,21 @@ async function loadChainMaster() {
       throw new Error("チェーンマスターの読み込みに失敗しました");
     }
 
-    const chains = await response.json();
-    chainMasterList = Array.isArray(chains)
-      ? chains.filter((chain) => chain && chain.enabled !== false)
-      : [];
-    populateChainSelect(chainMasterList);
+    const remoteChains = await response.json();
+    const localChains = readStoredChainMaster();
+    chainMasterList = mergeChainMasterLists(remoteChains, localChains);
+    saveStoredChainMaster(chainMasterList);
   } catch (error) {
-    console.warn("チェーンマスターの読み込みに失敗したため、既定の選択肢を使います。", error);
-    chainMasterList = [];
-    populateChainSelect([]);
+    console.warn("チェーンマスターの読み込みに失敗したため、ローカル保存データを使います。", error);
+    chainMasterList = readStoredChainMaster();
+    saveStoredChainMaster(chainMasterList);
+  }
+}
+
+function toggleAdminPanelVisibility() {
+  if (adminPanel) {
+    const isAdminMode = new URLSearchParams(window.location.search).get("admin") === "1";
+    adminPanel.hidden = !isAdminMode;
   }
 }
 
@@ -2603,6 +2787,29 @@ if (sendDraftButton) {
 if (copyDraftButton) {
   copyDraftButton.addEventListener("click", copyDraftData);
 }
+
+if (chainAdminForm) {
+  chainAdminForm.addEventListener("submit", handleChainAdminSubmit);
+}
+
+if (chainManagementList) {
+  chainManagementList.addEventListener("change", (event) => {
+    const toggle = event.target.closest("[data-chain-toggle]");
+
+    if (!toggle) {
+      return;
+    }
+
+    const chainEntry = chainMasterList.find((chain) => chain.id === toggle.dataset.chainToggle);
+    if (chainEntry) {
+      chainEntry.enabled = toggle.checked;
+      saveStoredChainMaster(chainMasterList);
+      refreshCampaignViews();
+    }
+  });
+}
+
+toggleAdminPanelVisibility();
 
 loadCampaignsFromCsv().then(() => {
   restoreSearchPreferences();

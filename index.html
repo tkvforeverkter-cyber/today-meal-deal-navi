@@ -150,103 +150,155 @@
         <p class="sort-note" id="sortNote">ダミー距離を使って近い順で表示しています。</p>
         <div class="results" id="results"></div>
       </section>
-      <section class="admin-draft-section" aria-label="管理者用キャンペーン下書き作成" hidden>
-        <details class="admin-draft">
-          <summary>管理者用：キャンペーン下書き作成</summary>
-          <div class="admin-draft-body">
-            <p class="admin-draft-help">この欄は運営者向けです。一般ユーザーは使う必要はありません。キャンペーンURLと基本情報を送ると、Google Apps Script経由でスプレッドシートに要確認データを追加できます。</p>
-            <p class="admin-endpoint-check">現在の送信先URL：<span id="gasEndpointText"></span></p>
-            <form class="admin-draft-form" id="adminDraftForm">
-              <div class="admin-draft-grid simple-draft-grid">
-                <label class="admin-draft-wide">
-                  <span>キャンペーンURL</span>
-                  <input id="draftOfficialUrl" type="url" placeholder="https://example.com/campaign" />
-                </label>
-                <label>
-                  <span>対象チェーン</span>
-                  <select id="draftChainName">
-                    <option value="">選択してください</option>
-                    <option value="その他">その他</option>
-                  </select>
-                </label>
-                <label>
-                  <span>管理者パスワード</span>
-                  <input id="draftAdminPassword" type="password" autocomplete="current-password" placeholder="送信用パスワード" />
-                </label>
-                <fieldset class="admin-check-group admin-draft-wide">
-                  <legend>対象ジャンル（複数選択OK）</legend>
-                  <div class="admin-check-list">
-                    <label><input type="checkbox" name="draftGenres" value="ランチ" checked />ランチ</label>
-                    <label><input type="checkbox" name="draftGenres" value="カフェ" />カフェ</label>
-                    <label><input type="checkbox" name="draftGenres" value="ファミレス" />ファミレス</label>
-                    <label><input type="checkbox" name="draftGenres" value="回転寿司" />回転寿司</label>
-                    <label><input type="checkbox" name="draftGenres" value="ファストフード" />ファストフード</label>
-                    <label><input type="checkbox" name="draftGenres" value="テイクアウト" />テイクアウト</label>
-                    <label><input type="checkbox" name="draftGenres" value="うどん" />うどん</label>
-                    <label><input type="checkbox" name="draftGenres" value="牛丼" />牛丼</label>
-                    <label><input type="checkbox" name="draftGenres" value="子連れ" />子連れ</label>
-                    <label><input type="checkbox" name="draftGenres" value="家族向け" />家族向け</label>
-                  </div>
-                </fieldset>
-                <fieldset class="admin-check-group admin-draft-wide">
-                  <legend>誰におすすめ（複数選択OK）</legend>
-                  <div class="admin-check-list">
-                    <label><input type="checkbox" name="draftCompanions" value="ひとり" />ひとり</label>
-                    <label><input type="checkbox" name="draftCompanions" value="子どもと" checked />子どもと</label>
-                    <label><input type="checkbox" name="draftCompanions" value="家族で" checked />家族で</label>
-                    <label><input type="checkbox" name="draftCompanions" value="友達と" />友達と</label>
-                    <label><input type="checkbox" name="draftCompanions" value="夫婦で" />夫婦で</label>
-                  </div>
-                </fieldset>
-                <label class="admin-draft-wide">
-                  <span>メモ</span>
-                  <textarea id="draftMemo" rows="3" placeholder="管理用メモ。画面には表示されません。"></textarea>
-                </label>
-              </div>
-              <details class="admin-detail-inputs">
-                <summary>詳細入力を開く</summary>
-                <div class="admin-draft-grid detail-draft-grid">
-                  <label>
-                    <span>店舗名（任意）</span>
-                    <input id="draftStoreName" type="text" placeholder="空欄なら近くの対象店舗として表示" />
-                  </label>
-                  <label>
-                    <span>キャンペーン名（任意）</span>
-                    <input id="draftCampaignTitle" type="text" placeholder="空欄なら公式キャンペーン確認用" />
-                  </label>
-                  <label>
-                    <span>期限（任意）</span>
-                    <input id="draftDeadline" type="text" placeholder="要確認" />
-                  </label>
-                  <label>
-                    <span>決済方法（任意）</span>
-                    <input id="draftPaymentMethods" type="text" placeholder="要確認" />
-                  </label>
-                  <label>
-                    <span>お得の種類（任意）</span>
-                    <input id="draftDiscountType" type="text" placeholder="要確認" />
-                  </label>
-                  <label>
-                    <span>お得度（任意）</span>
-                    <input id="draftDealScore" type="number" min="0" max="100" placeholder="50" />
-                  </label>
+      <section class="admin-panel" id="adminPanel" hidden>
+        <div class="section-title admin-panel-title">
+          <div>
+            <p class="eyebrow">Admin</p>
+            <h2>管理画面</h2>
+          </div>
+          <p>v1.2: チェーン管理と運用準備を追加しました</p>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <div>
+              <h3>チェーン管理</h3>
+              <p>追加・ON/OFF・URLを管理し、検索対象から外すチェーンを切り替えます。</p>
+            </div>
+          </div>
+
+          <div class="admin-chain-list" id="chainManagementList" aria-live="polite"></div>
+
+          <form class="admin-chain-form" id="chainAdminForm">
+            <div class="admin-form-grid">
+              <label>
+                <span>チェーン名</span>
+                <input id="chainAdminName" name="chainAdminName" type="text" placeholder="例：ガスト" required />
+              </label>
+              <label>
+                <span>ジャンル</span>
+                <input id="chainAdminGenre" name="chainAdminGenre" type="text" placeholder="例：ファミレス" />
+              </label>
+              <label>
+                <span>公式サイトURL</span>
+                <input id="chainAdminOfficialUrl" name="chainAdminOfficialUrl" type="url" placeholder="https://example.com" />
+              </label>
+              <label>
+                <span>キャンペーン一覧URL</span>
+                <input id="chainAdminCampaignUrl" name="chainAdminCampaignUrl" type="url" placeholder="https://example.com/campaign" />
+              </label>
+              <label>
+                <span>有効 / 無効</span>
+                <select id="chainAdminEnabled" name="chainAdminEnabled">
+                  <option value="true">有効</option>
+                  <option value="false">無効</option>
+                </select>
+              </label>
+            </div>
+            <button type="submit">チェーン追加</button>
+          </form>
+
+          <p class="admin-next-step">次の段階では、このチェーン一覧を chains.json や Apps Script に反映します。今は画面上で管理し、検索・おすすめ表示に反映させるところまで対応しています。</p>
+        </div>
+
+        <section class="admin-draft-section" aria-label="管理者用キャンペーン下書き作成">
+          <details class="admin-draft">
+            <summary>管理者用：キャンペーン下書き作成</summary>
+            <div class="admin-draft-body">
+              <p class="admin-draft-help">この欄は運営者向けです。一般ユーザーは使う必要はありません。キャンペーンURLと基本情報を送ると、Google Apps Script経由でスプレッドシートに要確認データを追加できます。</p>
+              <p class="admin-endpoint-check">現在の送信先URL：<span id="gasEndpointText"></span></p>
+              <form class="admin-draft-form" id="adminDraftForm">
+                <div class="admin-draft-grid simple-draft-grid">
                   <label class="admin-draft-wide">
-                    <span>注意点（任意）</span>
-                    <textarea id="draftCaution" rows="3" placeholder="空欄なら安全な要確認文を自動入力"></textarea>
+                    <span>キャンペーンURL</span>
+                    <input id="draftOfficialUrl" type="url" placeholder="https://example.com/campaign" />
+                  </label>
+                  <label>
+                    <span>対象チェーン</span>
+                    <select id="draftChainName">
+                      <option value="">選択してください</option>
+                      <option value="その他">その他</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>管理者パスワード</span>
+                    <input id="draftAdminPassword" type="password" autocomplete="current-password" placeholder="送信用パスワード" />
+                  </label>
+                  <fieldset class="admin-check-group admin-draft-wide">
+                    <legend>対象ジャンル（複数選択OK）</legend>
+                    <div class="admin-check-list">
+                      <label><input type="checkbox" name="draftGenres" value="ランチ" checked />ランチ</label>
+                      <label><input type="checkbox" name="draftGenres" value="カフェ" />カフェ</label>
+                      <label><input type="checkbox" name="draftGenres" value="ファミレス" />ファミレス</label>
+                      <label><input type="checkbox" name="draftGenres" value="回転寿司" />回転寿司</label>
+                      <label><input type="checkbox" name="draftGenres" value="ファストフード" />ファストフード</label>
+                      <label><input type="checkbox" name="draftGenres" value="テイクアウト" />テイクアウト</label>
+                      <label><input type="checkbox" name="draftGenres" value="うどん" />うどん</label>
+                      <label><input type="checkbox" name="draftGenres" value="牛丼" />牛丼</label>
+                      <label><input type="checkbox" name="draftGenres" value="子連れ" />子連れ</label>
+                      <label><input type="checkbox" name="draftGenres" value="家族向け" />家族向け</label>
+                    </div>
+                  </fieldset>
+                  <fieldset class="admin-check-group admin-draft-wide">
+                    <legend>誰におすすめ（複数選択OK）</legend>
+                    <div class="admin-check-list">
+                      <label><input type="checkbox" name="draftCompanions" value="ひとり" />ひとり</label>
+                      <label><input type="checkbox" name="draftCompanions" value="子どもと" checked />子どもと</label>
+                      <label><input type="checkbox" name="draftCompanions" value="家族で" checked />家族で</label>
+                      <label><input type="checkbox" name="draftCompanions" value="友達と" />友達と</label>
+                      <label><input type="checkbox" name="draftCompanions" value="夫婦で" />夫婦で</label>
+                    </div>
+                  </fieldset>
+                  <label class="admin-draft-wide">
+                    <span>メモ</span>
+                    <textarea id="draftMemo" rows="3" placeholder="管理用メモ。画面には表示されません。"></textarea>
                   </label>
                 </div>
-              </details>
-              <div class="admin-draft-actions">
-                <button type="submit">スプレッドシート用データを作る</button>
-                <button type="button" id="sendDraftButton">スプレッドシートに送信</button>
-                <button type="button" id="copyDraftButton">コピーする</button>
-              </div>
-            </form>
-            <label class="admin-draft-output-label" for="draftOutput">出力データ</label>
-            <textarea id="draftOutput" class="admin-draft-output" rows="4" readonly placeholder="ここにタブ区切りデータが表示されます"></textarea>
-            <p class="admin-draft-message" id="draftMessage" aria-live="polite">未送信</p>
-          </div>
-        </details>
+                <details class="admin-detail-inputs">
+                  <summary>詳細入力を開く</summary>
+                  <div class="admin-draft-grid detail-draft-grid">
+                    <label>
+                      <span>店舗名（任意）</span>
+                      <input id="draftStoreName" type="text" placeholder="空欄なら近くの対象店舗として表示" />
+                    </label>
+                    <label>
+                      <span>キャンペーン名（任意）</span>
+                      <input id="draftCampaignTitle" type="text" placeholder="空欄なら公式キャンペーン確認用" />
+                    </label>
+                    <label>
+                      <span>期限（任意）</span>
+                      <input id="draftDeadline" type="text" placeholder="要確認" />
+                    </label>
+                    <label>
+                      <span>決済方法（任意）</span>
+                      <input id="draftPaymentMethods" type="text" placeholder="要確認" />
+                    </label>
+                    <label>
+                      <span>お得の種類（任意）</span>
+                      <input id="draftDiscountType" type="text" placeholder="要確認" />
+                    </label>
+                    <label>
+                      <span>お得度（任意）</span>
+                      <input id="draftDealScore" type="number" min="0" max="100" placeholder="50" />
+                    </label>
+                    <label class="admin-draft-wide">
+                      <span>注意点（任意）</span>
+                      <textarea id="draftCaution" rows="3" placeholder="空欄なら安全な要確認文を自動入力"></textarea>
+                    </label>
+                  </div>
+                </details>
+                <div class="admin-draft-actions">
+                  <button type="submit">スプレッドシート用データを作る</button>
+                  <button type="button" id="sendDraftButton">スプレッドシートに送信</button>
+                  <button type="button" id="copyDraftButton">コピーする</button>
+                </div>
+              </form>
+              <label class="admin-draft-output-label" for="draftOutput">出力データ</label>
+              <textarea id="draftOutput" class="admin-draft-output" rows="4" readonly placeholder="ここにタブ区切りデータが表示されます"></textarea>
+              <p class="admin-draft-message" id="draftMessage" aria-live="polite">未送信</p>
+            </div>
+          </details>
+        </section>
       </section>
 
       <footer class="demo-footer">
